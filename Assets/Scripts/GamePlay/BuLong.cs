@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BuLong : MonoBehaviour
 {
+    [SerializeField] int lineIndex;
     [SerializeField] int countTotalOcVit;
     [SerializeField] int countScaleUp;
     public bool isNull;
@@ -22,7 +23,8 @@ public class BuLong : MonoBehaviour
     {
         objs.Add(objScaleUp);
     }
-
+    public void SetLineIndex(int lineIndex) { this.lineIndex = lineIndex; }
+    public int GetLineIndex() { return lineIndex; }
     public void SetCountOcVit(int countOcVit) {
         this.countTotalOcVit = countOcVit;
         countScaleUp = (int)(countTotalOcVit / 2);
@@ -34,7 +36,7 @@ public class BuLong : MonoBehaviour
             if (i >= objs.Count)
             {
                 Transform temp = Instantiate(objScaleUp, trsScaleParent);
-                temp.transform.position = vetorOffset * i + vetorOffsetDe;
+                temp.transform.localPosition = vetorOffset * i + vetorOffsetDe;
                 objs.Add(temp);
             }
         }
