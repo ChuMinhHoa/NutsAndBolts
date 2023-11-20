@@ -6,6 +6,7 @@ public class LevelDataConfig : ScriptableObject
 {
     public TextAsset csv;
     public List<LevelData> levelDatas= new List<LevelData>();
+    public LevelData levelDataEasy;
     private void OnEnable()
     {
         levelDatas.Clear();
@@ -18,6 +19,7 @@ public class LevelDataConfig : ScriptableObject
             levelData.TotalBulong = int.Parse(datas[i]["TotalBulong"]);
             levelData.CountMaxInLine = int.Parse(datas[i]["CountMaxInLine"]);
             levelData.BulongFree = int.Parse(datas[i]["BulongFree"]);
+            levelData.TotalOcVit = int.Parse(datas[i]["OcVitCount"]);
             levelDatas.Add(levelData);
         }
        
@@ -26,6 +28,8 @@ public class LevelDataConfig : ScriptableObject
     public LevelData GetLevelData(int level) {
         return levelDatas[level];
     }
+
+    public LevelData GetLevelEasy() { return levelDataEasy; }
 }
 
 [System.Serializable]
@@ -35,4 +39,5 @@ public class LevelData {
     public int TotalBulong;
     public int CountMaxInLine;
     public int BulongFree;
+    public int TotalOcVit;
 }

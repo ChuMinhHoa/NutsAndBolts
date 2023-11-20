@@ -14,16 +14,20 @@ public class GamePlayController : MonoBehaviour
     [SerializeField] int totalLine;
     [SerializeField] int countMaxInLine;
     [SerializeField] int totalCount;
+    [SerializeField] int ocVitCount;
+    [SerializeField] int bulongFreeCount;
     [SerializeField] List<BuLong> buLongs;
     [SerializeField] BuLong bulongPref;
     [SerializeField] Transform parentSpawnBulong;
 
     [SerializeField] int currentLevel;
-
+    [SerializeField] int state;
 
     int countTemp;
     int countRemain;
     int indexLine;
+
+  
 
     private void Start()
     {
@@ -34,15 +38,17 @@ public class GamePlayController : MonoBehaviour
     int lineOdd;
     int lineOddTemp;
 
-    public void SetDataLevel(int totalLine, int totalCount, int countMaxInLine) {
+    public void SetDataLevel(int totalLine, int totalCount, int countMaxInLine, int ocVitCount, int bulongFreeCount) {
         for (int i = 0; i < buLongs.Count; i++)
             buLongs[i].gameObject.SetActive(false);
         this.totalLine = totalLine;
         this.totalCount = totalCount;
         this.countMaxInLine = countMaxInLine;
+        this.ocVitCount = ocVitCount;
+        this.bulongFreeCount = bulongFreeCount;
         InitBulong();
     }
-
+    #region Bu Long
     public void InitBulong() {
         countRemain = totalCount;
         countTemp = 3;
@@ -81,6 +87,13 @@ public class GamePlayController : MonoBehaviour
             if (i % 2 != 0)
                 lineOdd++;
             SpawnBulong(i, countInLine[i], lineOdd);
+        }
+
+        for (int i = 0; i < buLongs.Count - bulongFreeCount; i++)
+        {
+            //SpawnOcVit(buLongs[i]);
+            Debug.Log("Spawn Oc vit on Bulong: "+ i);
+            buLongs[i].SpawnOcVit(ocVitCount);
         }
     }
 
@@ -131,6 +144,8 @@ public class GamePlayController : MonoBehaviour
             BuLong buLong = GetBulong();
             buLong.transform.position = vectorPositionSpawn;
             buLong.SetLineIndex(lineIndex);
+            buLong.SetCountOcVit(ocVitCount);
+            buLong.InitScaleup();
             lastPostion.x = 0;
         }
         else lastPostion.x = -vectorSpace.x + vectorScale.x / 2;
@@ -140,13 +155,17 @@ public class GamePlayController : MonoBehaviour
             BuLong newBuLong1 = GetBulong();
             newBuLong1.transform.position = vectorPositionSpawn;
             newBuLong1.SetLineIndex(lineIndex);
+            newBuLong1.SetCountOcVit(ocVitCount);
+            newBuLong1.InitScaleup();
             lastPostion.x = vectorPositionSpawn.x;
 
             vectorPositionSpawn.x *= -1;
             BuLong newBuLong2 = GetBulong();
             newBuLong2.transform.position = vectorPositionSpawn;
             newBuLong2.SetLineIndex(lineIndex);
-          
+            newBuLong2.SetCountOcVit(ocVitCount);
+            newBuLong2.InitScaleup();
+
         }
     }
 
@@ -161,8 +180,13 @@ public class GamePlayController : MonoBehaviour
         }
         BuLong buLong = Instantiate(bulongPref, parentSpawnBulong);
         buLongs.Add(buLong);
+        buLong.SetBulongID(buLongs.Count);
         return buLong;
     }
+    #endregion
+
+   
+
     LevelData levelData;
     private void Update()
     {
@@ -173,8 +197,16 @@ public class GamePlayController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.C))
         {
-            levelData = levelDataConfig.GetLevelData(currentLevel);
-            SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine);
+            if (state == 1)
+            {
+                levelData = levelDataConfig.GetLevelData(currentLevel);
+                SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
+            }
+            else {
+                levelData = levelDataConfig.GetLevelEasy();
+                SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
+            }
+            
         }
     }
 }
