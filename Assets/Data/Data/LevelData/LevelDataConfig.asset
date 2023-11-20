@@ -16,21 +16,21 @@ MonoBehaviour:
   levelDatas:
   - Level: 1
     TotalLine: 2
-    TotalBulong: 4
+    TotalBulong: 3
     CountMaxInLine: 3
-    BulongFree: 2
+    BulongFree: 1
     TotalOcVit: 2
   - Level: 2
     TotalLine: 2
-    TotalBulong: 4
+    TotalBulong: 3
     CountMaxInLine: 3
-    BulongFree: 2
+    BulongFree: 1
     TotalOcVit: 2
   - Level: 3
     TotalLine: 2
-    TotalBulong: 4
+    TotalBulong: 3
     CountMaxInLine: 3
-    BulongFree: 2
+    BulongFree: 1
     TotalOcVit: 2
   - Level: 4
     TotalLine: 2
@@ -316,302 +316,302 @@ MonoBehaviour:
     TotalOcVit: 4
   - Level: 51
     TotalLine: 4
-    TotalBulong: 12
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 52
     TotalLine: 4
-    TotalBulong: 12
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 53
     TotalLine: 4
-    TotalBulong: 12
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 54
     TotalLine: 4
-    TotalBulong: 12
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 55
     TotalLine: 4
-    TotalBulong: 12
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 56
     TotalLine: 4
-    TotalBulong: 12
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 57
     TotalLine: 4
-    TotalBulong: 12
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 58
     TotalLine: 4
-    TotalBulong: 12
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 59
     TotalLine: 4
-    TotalBulong: 12
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 60
     TotalLine: 4
-    TotalBulong: 12
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 61
     TotalLine: 4
-    TotalBulong: 12
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 62
     TotalLine: 4
-    TotalBulong: 12
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 63
     TotalLine: 4
-    TotalBulong: 12
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 64
     TotalLine: 4
-    TotalBulong: 12
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 65
     TotalLine: 5
-    TotalBulong: 10
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 66
     TotalLine: 5
-    TotalBulong: 10
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 67
     TotalLine: 5
-    TotalBulong: 10
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 68
     TotalLine: 5
-    TotalBulong: 10
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 69
     TotalLine: 5
-    TotalBulong: 10
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 70
     TotalLine: 5
-    TotalBulong: 10
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 71
     TotalLine: 5
-    TotalBulong: 10
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 72
     TotalLine: 5
-    TotalBulong: 10
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 73
     TotalLine: 5
-    TotalBulong: 10
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 74
     TotalLine: 5
-    TotalBulong: 10
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 75
     TotalLine: 5
-    TotalBulong: 10
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 76
     TotalLine: 5
-    TotalBulong: 10
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 77
     TotalLine: 5
-    TotalBulong: 10
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 78
     TotalLine: 5
-    TotalBulong: 10
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 79
     TotalLine: 5
-    TotalBulong: 10
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 80
     TotalLine: 5
-    TotalBulong: 10
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 81
     TotalLine: 5
-    TotalBulong: 10
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 82
     TotalLine: 5
-    TotalBulong: 10
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 2
     TotalOcVit: 4
   - Level: 83
     TotalLine: 5
-    TotalBulong: 15
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 3
     TotalOcVit: 4
   - Level: 84
     TotalLine: 5
-    TotalBulong: 15
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 3
     TotalOcVit: 4
   - Level: 85
     TotalLine: 5
-    TotalBulong: 15
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 3
     TotalOcVit: 4
   - Level: 86
     TotalLine: 5
-    TotalBulong: 15
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 3
     TotalOcVit: 4
   - Level: 87
     TotalLine: 5
-    TotalBulong: 15
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 3
     TotalOcVit: 4
   - Level: 88
     TotalLine: 5
-    TotalBulong: 15
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 3
     TotalOcVit: 4
   - Level: 89
     TotalLine: 5
-    TotalBulong: 15
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 3
     TotalOcVit: 4
   - Level: 90
     TotalLine: 5
-    TotalBulong: 15
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 3
     TotalOcVit: 4
   - Level: 91
     TotalLine: 5
-    TotalBulong: 15
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 3
     TotalOcVit: 4
   - Level: 92
     TotalLine: 5
-    TotalBulong: 15
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 3
     TotalOcVit: 4
   - Level: 93
     TotalLine: 5
-    TotalBulong: 15
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 3
     TotalOcVit: 4
   - Level: 94
     TotalLine: 5
-    TotalBulong: 15
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 3
     TotalOcVit: 4
   - Level: 95
     TotalLine: 5
-    TotalBulong: 15
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 3
     TotalOcVit: 4
   - Level: 96
     TotalLine: 5
-    TotalBulong: 15
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 3
     TotalOcVit: 4
   - Level: 97
     TotalLine: 5
-    TotalBulong: 15
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 3
     TotalOcVit: 4
   - Level: 98
     TotalLine: 5
-    TotalBulong: 15
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 3
     TotalOcVit: 4
   - Level: 99
     TotalLine: 5
-    TotalBulong: 15
+    TotalBulong: 9
     CountMaxInLine: 4
     BulongFree: 3
     TotalOcVit: 4
   levelDataEasy:
     Level: 1
     TotalLine: 2
-    TotalBulong: 4
+    TotalBulong: 3
     CountMaxInLine: 3
-    BulongFree: 2
+    BulongFree: 1
     TotalOcVit: 2

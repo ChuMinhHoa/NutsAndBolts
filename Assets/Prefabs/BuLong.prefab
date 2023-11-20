@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &426717079876565356
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7157218588794507542}
+  m_Layer: 0
+  m_Name: PointIn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7157218588794507542
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 426717079876565356}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 542075034774278891}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &542075034774278890
 GameObject:
   m_ObjectHideFlags: 0
@@ -30,9 +61,10 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4344317299982234}
   - {fileID: 542075035774757423}
+  - {fileID: 4344317299982234}
   - {fileID: 7322927424648352962}
+  - {fileID: 7157218588794507542}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -63,7 +95,8 @@ MonoBehaviour:
   objOcVitPref: {fileID: 8449725616977143686, guid: 693e75d5d9ded4f45b4b3aebca83adb1, type: 3}
   listOcVit: []
   vectorSpaceOcVit: {x: 0, y: 1.15, z: 0}
-  pointInOut: {fileID: 7322927424648352962}
+  pointOut: {fileID: 7322927424648352962}
+  pointIn: {fileID: 7157218588794507542}
 --- !u!65 &4597214113204322119
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -75,8 +108,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 3.4820065, y: 7.4, z: 3.9310436}
-  m_Center: {x: -0.0642581, y: 3.7, z: 0.22693872}
+  m_Size: {x: 3.5309067, y: 7.4, z: 3.614891}
+  m_Center: {x: -0.039808035, y: 3.7, z: 0.006728649}
 --- !u!1 &542075035774757422
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,7 +139,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 542075034774278891}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7790343186263317632
 GameObject:
@@ -118,7 +151,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7322927424648352962}
   m_Layer: 0
-  m_Name: PointInOut
+  m_Name: PointOut
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -146,6 +179,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 542075034774278891}
     m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 2681169fb99104341a4a5001e6261239, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2681169fb99104341a4a5001e6261239, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

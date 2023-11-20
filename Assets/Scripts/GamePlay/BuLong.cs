@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,9 +24,11 @@ public class BuLong : MonoBehaviour
     [SerializeField] OcVit objOcVitPref;
     [SerializeField] List<OcVit> listOcVit;
     [SerializeField] Vector3 vectorSpaceOcVit;
+    [SerializeField] int totalOcVit;
 
     [Header("==============ControllMove==============")]
-    [SerializeField] Transform pointInOut; //1.6f+2.8f*i+vectorSpaceOcVit.y*2;
+    [SerializeField] Transform pointOut; //1.6f+2.8f*i+vectorSpaceOcVit.y*2;
+    [SerializeField] Transform pointIn; 
 
     public void SetBulongID(int valueID) { bulongID = valueID; }
     public int GetBulongID() { return bulongID; }
@@ -54,7 +57,7 @@ public class BuLong : MonoBehaviour
         myCollider.size = vectorSizerCollider;
 
         vectorPointInOut.y = colliderY + vectorSpaceOcVit.y * 2f;
-        pointInOut.localPosition = vectorPointInOut;
+        pointOut.localPosition = vectorPointInOut;
 
         for (int i = countScaleUp; i < objs.Count; i++)
             objs[i].gameObject.SetActive(false);
@@ -76,13 +79,16 @@ public class BuLong : MonoBehaviour
     }
 
     #region Oc Vit
+    public void SetTotalOcVit(int ocVitCount) { totalOcVit = ocVitCount; }
     public void SpawnOcVit(int ocVitCount)
     {
+        totalOcVit = ocVitCount;
         for (int i = 0; i < ocVitCount; i++)
         {
             vectorSpawnOcvit = vetorOffsetDe + vectorSpaceOcVit * i;
             OcVit ocVit = GetOcVit();
-            ocVit.InitData(vectorSpawnOcvit);
+            MaterialColor mColor = GamePlayController.Instance.GetColor();
+            ocVit.InitData(vectorSpawnOcvit, mColor);
         }
     }
     Vector3 vectorSpawnOcvit;
@@ -103,10 +109,48 @@ public class BuLong : MonoBehaviour
 
     #endregion
 
-    public Transform GetPointInOut() { return pointInOut; }
+    public Transform GetPointInOut() { return pointOut; }
 
-    private void OnMouseDown()
+    private void OnMouseUp()
     {
-        Debug.Log("OnChoose");
+        if (!GamePlayController.Instance.onChoosed)
+        {
+            if (listOcVit.Count == 0)
+                return;
+            GamePlayController.Instance.OnChooseCurrentOcVit(listOcVit[listOcVit.Count - 1], this);
+        }
+        else
+            GamePlayController.Instance.OnChooseOtherBulong(this);
+    }
+
+    public void ChooseSameBulong() {
+        vectorSpawnOcvit = vetorOffsetDe + vectorSpaceOcVit * (listOcVit.Count - 1);
+        pointIn.localPosition = vectorSpawnOcvit;
+        listOcVit[listOcVit.Count - 1].ChooseIn(pointIn);
+    }
+
+    public void ChooseOtherBulong(OcVit ocVit) {
+        listOcVit.Add(ocVit);
+        ocVit.transform.parent = trsOcVitParent;
+        ocVit.ChooseOut(pointOut, ()=> {
+            vectorSpawnOcvit = vetorOffsetDe + vectorSpaceOcVit * (listOcVit.Count - 1);
+            pointIn.localPosition = vectorSpawnOcvit;
+            ocVit.ChooseIn(pointIn);
+        });
+    
+    }
+
+    public bool IsFull() { return (listOcVit.Count == totalOcVit && listOcVit.Count > 0); }
+    public bool IsCanJoin(OcVit ocvit) {
+        if (listOcVit.Count == 0)
+            return true;
+        Debug.Log(listOcVit[listOcVit.Count - 1].GetColor());
+        Debug.Log(ocvit.GetColor());
+        return listOcVit[listOcVit.Count - 1].IsSameColor(ocvit.GetColor());
+    }
+
+    public void RemoveOcvit(OcVit ocvit)
+    {
+        listOcVit.Remove(ocvit);
     }
 }

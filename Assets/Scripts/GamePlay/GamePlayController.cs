@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class GamePlayController : MonoBehaviour
 {
+    public static GamePlayController Instance;
+    private void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+    }
     [SerializeField] LevelDataConfig levelDataConfig;
 
     [SerializeField] Vector3 vectorSpace;
@@ -16,6 +22,7 @@ public class GamePlayController : MonoBehaviour
     [SerializeField] int totalCount;
     [SerializeField] int ocVitCount;
     [SerializeField] int bulongFreeCount;
+    [SerializeField] int totalColor;
     [SerializeField] List<BuLong> buLongs;
     [SerializeField] BuLong bulongPref;
     [SerializeField] Transform parentSpawnBulong;
@@ -46,6 +53,8 @@ public class GamePlayController : MonoBehaviour
         this.countMaxInLine = countMaxInLine;
         this.ocVitCount = ocVitCount;
         this.bulongFreeCount = bulongFreeCount;
+        totalColor = totalCount - bulongFreeCount;
+        InitColor();
         InitBulong();
     }
     #region Bu Long
@@ -92,8 +101,12 @@ public class GamePlayController : MonoBehaviour
         for (int i = 0; i < buLongs.Count - bulongFreeCount; i++)
         {
             //SpawnOcVit(buLongs[i]);
-            Debug.Log("Spawn Oc vit on Bulong: "+ i);
             buLongs[i].SpawnOcVit(ocVitCount);
+        }
+
+        for (int i = buLongs.Count - bulongFreeCount; i < buLongs.Count; i++)
+        {
+            buLongs[i].SetTotalOcVit(ocVitCount);
         }
     }
 
@@ -185,8 +198,66 @@ public class GamePlayController : MonoBehaviour
     }
     #endregion
 
-   
+    #region Controll
+    OcVit currentOcvit;
+    BuLong currentBulong;
+    public bool onChoosed;
+    public void OnChooseCurrentOcVit(OcVit ocVit, BuLong bulong) {
+        currentBulong = bulong;
+        currentOcvit = ocVit;
+        onChoosed = true;
+        currentOcvit.ChooseOut(bulong.GetPointInOut());
+    }
+    public void OnChooseOtherBulong(BuLong bulong) {
+        if (currentBulong == bulong)
+            ChooseTheSameBulong(bulong);
+        else {
+            if (bulong.IsFull() || !bulong.IsCanJoin(currentOcvit))
+            {
+                ChooseTheSameBulong(currentBulong);
+                SetDefault();
+                return;
+            }
+            Debug.Log("Choose Other");
+            currentBulong.RemoveOcvit(currentOcvit);
+            bulong.ChooseOtherBulong(currentOcvit);
+            SetDefault();
+        }
+    }
 
+    void SetDefault() {
+        onChoosed = false;
+
+        currentBulong = null;
+        currentOcvit = null;
+    }
+
+    void ChooseTheSameBulong(BuLong buLong) {
+        buLong.ChooseSameBulong();
+        onChoosed = false;
+        currentBulong = null;
+        currentOcvit = null;
+    }
+    public void OnOutChoose() {
+       
+    }
+    #endregion
+    List<int> colorRemaining = new List<int>();
+    void InitColor() {
+        colorRemaining.Clear();
+        for (int i = 0; i < totalColor; i++)
+            colorRemaining.Add(ocVitCount);
+    }
+    public MaterialColor GetColor() {
+        int colorIndex = -1;
+        while (colorIndex == -1) {
+            colorIndex= Random.Range(0, colorRemaining.Count);
+            if (colorRemaining[colorIndex] == 0)
+                colorIndex = -1;
+        }
+        colorRemaining[colorIndex]--;
+        return (MaterialColor)colorIndex;
+    }
     LevelData levelData;
     private void Update()
     {
