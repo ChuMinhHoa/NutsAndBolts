@@ -55,4 +55,12 @@ public class OcVit : MonoBehaviour
     {
         return materialData.colorID;
     }
+
+    public int SwitchColorID(int colorID)
+    {
+        int currentColorID = materialData.colorID;
+        materialData = GamePlayController.Instance.GetMaterialData(colorID);
+        InitMaterial(materialData);
+        return currentColorID;
+    }
 }

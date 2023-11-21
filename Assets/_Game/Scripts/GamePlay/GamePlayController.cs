@@ -135,8 +135,7 @@ public class GamePlayController : MonoBehaviour
         {
             for (int j = 0; j < buLongs.Count; j++)
             {
-                Debug.Log("bulong id: "+ buLongs[j].bulongID+" is null: "+ buLongs[j].isNull);
-                if (!buLongs[j].isNull) buLongs[j].SetColorToOcVit(i);
+                if (!buLongs[j].isNull && buLongs[j].gameObject.activeSelf) buLongs[j].SetColorToOcVit(i);
             }
         }
     
@@ -304,15 +303,30 @@ public class GamePlayController : MonoBehaviour
     #region Random Color
     List<MaterialOnCount> colorRemaining = new List<MaterialOnCount>();
     List<MaterialOnCount> colorRemOnCount = new List<MaterialOnCount>();
+    List<int> listColorIDs = new List<int>();
     void InitColor() {
+        listColorIDs = materitalDataConfig.GetMaterialRandom(totalColor);
         colorRemaining.Clear();
         for (int i = 0; i < totalColor; i++)
         {
             MaterialOnCount mOnCount = new MaterialOnCount();
-            mOnCount.colorID = i;
+            mOnCount.colorID = listColorIDs[i];
             mOnCount.count = ocVitCount;
             colorRemaining.Add(mOnCount);
         }
+    }
+    public int GetColorSwitch(int colorID, BuLong bulong) {
+        for (int i = 0; i < buLongs.Count; i++)
+        {
+            if (bulong != buLongs[i])
+            {
+                if (!buLongs[i].CheckBulongHasColor(colorID))
+                {
+                    return buLongs[i].SwitchColorOcVit(colorID);
+                }
+            }
+        }
+        return -1;
     }
     public int GetColor() {
         int colorIndex = -1;
@@ -320,10 +334,11 @@ public class GamePlayController : MonoBehaviour
         colorIndex = Random.Range(0, colorRemOnCount.Count);
         return colorRemOnCount[colorIndex].colorID;
     }
+
     public bool ColorRemainCountCheckIsLastColor() {
         return colorRemOnCount.Count <= 1;
     }
-    public bool ColorRemainCountCheckIsLastColorHasMore() { return colorRemOnCount[0].count > 1; }
+
     public void MinusColorRemain(int colorID) {
         colorRemaining.Find(e => e.colorID == colorID).count--;
     }
@@ -336,18 +351,24 @@ public class GamePlayController : MonoBehaviour
         if (currentBulongDoneCount == totalColor)
         {
             Debug.Log("Done level");
-            if (state == 1)
-            {
-                currentLevel++;
-
-                Debug.Log(currentLevel);
-                state = 0;
-            }
-            else state = 1;
+          
             DOVirtual.DelayedCall(.5f, () => {
                 currentBulongDoneCount = 0;
-                levelData = levelDataConfig.GetLevelData(currentLevel);
-                SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
+                if (state == 1)
+                {
+                    currentLevel++;
+                    state = 0;
+                    levelData = levelDataConfig.GetLevelEasy();
+                    SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
+                }
+                else
+                {
+                    state = 1;
+                    levelData = levelDataConfig.GetLevelData(currentLevel);
+                    SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
+                }
+               
+               
             });
            
         }
@@ -375,7 +396,6 @@ public class GamePlayController : MonoBehaviour
             if (state == 1)
             {
                 levelData = levelDataConfig.GetLevelData(currentLevel);
-                Debug.Log("Current level: "+currentLevel);
                 SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
             }
             else {

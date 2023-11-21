@@ -42,6 +42,10 @@ public class BuLong : MonoBehaviour
     public int GetLineIndex() { return lineIndex; }
 
     public void InitScaleup() {
+        for (int i = 0; i < objs.Count; i++)
+        {
+            objs[i].gameObject.SetActive(false);
+        }
         myEffect.gameObject.SetActive(false);
         isDone = false;
         colliderY = 1.6f;
@@ -50,8 +54,7 @@ public class BuLong : MonoBehaviour
         Vector3 vectorPointInOut = Vector3.zero;
         for (int i = 0; i < countScaleUp; i++)
         {
-            if (i >= objs.Count)
-                GetObjScale().localPosition = vetorOffset * i + vetorOffsetDe;
+            GetObjScale().localPosition = vetorOffset * i + vetorOffsetDe;
             colliderY += vetorOffset.y;
         }
         colliderY += .2f;
@@ -87,7 +90,8 @@ public class BuLong : MonoBehaviour
     #region Oc Vit
     public void SetTotalOcVit(int ocVitCount) {
         totalOcVit = ocVitCount;
-        countMaxSameColor = totalOcVit / 2;
+        Debug.Log(totalOcVit % 2);
+        countMaxSameColor = totalOcVit / 2 ;
         countScaleUp = (totalOcVit / 2);
     }
     public void SpawnOcVit(int ocVitCount)
@@ -104,34 +108,37 @@ public class BuLong : MonoBehaviour
     int countSameColor;
     int countMaxSameColor;
     bool isLastColor;
-    bool lastColorMore;
     public void SetColorToOcVit(int ocVitIndex) {
         int colorID = GamePlayController.Instance.GetColor();
+        MaterialData materialData;
         if (ocVitIndex > 0)
         {
-            Debug.Log(ocVitIndex + " bulong iD" + bulongID);
             if (listOcVit[ocVitIndex - 1].IsSameColor(colorID))
             {
                 countSameColor++;
                 isLastColor = GamePlayController.Instance.ColorRemainCountCheckIsLastColor();
-                if (countSameColor >= countMaxSameColor && !isLastColor)
+                if (countSameColor >= countMaxSameColor)
                 {
-                    SetColorToOcVit(ocVitIndex);
-                    return;
+                    if (!isLastColor)
+                    {
+                        SetColorToOcVit(ocVitIndex);
+                        return;
+                    }
+                    else {
+                        colorID = GamePlayController.Instance.GetColorSwitch(colorID, this);
+                        Debug.Log("Color ID switch: " + colorID);
+                        materialData = GamePlayController.Instance.GetMaterialData(colorID);
+                        listOcVit[ocVitIndex].InitMaterial(materialData);
+                        return;
+                    }
                 }
-                //lastColorMore = GamePlayController.Instance.ColorRemainCountCheckIsLastColorHasMore();
-                //if (isLastColor && lastColorMore)
-                //{
-
-                //}
             }
             else
                 countSameColor = 0;
         }
         else countSameColor = 0;
         GamePlayController.Instance.MinusColorRemain(colorID);
-        MaterialData materialData = GamePlayController.Instance.GetMaterialData(colorID);
-        Debug.Log(ocVitIndex + " bulong iD" + bulongID);
+        materialData = GamePlayController.Instance.GetMaterialData(colorID);
         listOcVit[ocVitIndex].InitMaterial(materialData);
     }
     Vector3 vectorSpawnOcvit;
@@ -227,5 +234,18 @@ public class BuLong : MonoBehaviour
     public void RemoveOcvit(OcVit ocvit)
     {
         listOcVit.Remove(ocvit);
+    }
+    public bool CheckBulongHasColor(int colorID) {
+        for (int i = 0; i < listOcVit.Count; i++)
+        {
+            if (colorID == listOcVit[i].GetColor())
+                return true;
+        }
+        return false;
+    }
+
+    public int SwitchColorOcVit(int colorID)
+    {
+        return listOcVit[listOcVit.Count - 1].SwitchColorID(colorID);
     }
 }
