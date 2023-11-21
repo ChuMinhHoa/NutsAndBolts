@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-
+using DG.Tweening;
 public class GamePlayController : MonoBehaviour
 {
     public static GamePlayController Instance;
@@ -43,7 +43,16 @@ public class GamePlayController : MonoBehaviour
 
     private void Start()
     {
-        InitBulong();
+        if (state == 1)
+        {
+            levelData = levelDataConfig.GetLevelData(currentLevel);
+            SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
+        }
+        else
+        {
+            levelData = levelDataConfig.GetLevelEasy();
+            SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
+        }
     }
     bool isEven;
     Vector3 lastPostion;
@@ -110,16 +119,35 @@ public class GamePlayController : MonoBehaviour
                 lineOdd++;
             SpawnBulong(i, countInLine[i], lineOdd);
         }
-
-        for (int i = 0; i < buLongs.Count - bulongFreeCount; i++)
+        SetBulongNull();
+        for (int i = 0; i < totalCount; i++)
         {
-            //SpawnOcVit(buLongs[i]);
             buLongs[i].SpawnOcVit(ocVitCount);
         }
+        SetColorToOcVit();
+    }
+    int bulongNullIndex;
+    List<BuLong> listBulongAble = new List<BuLong>();
 
-        for (int i = buLongs.Count - bulongFreeCount; i < buLongs.Count; i++)
+    void SetColorToOcVit() {
+
+        for (int i = 0; i < ocVitCount; i++)
         {
-            buLongs[i].SetTotalOcVit(ocVitCount);
+            for (int j = 0; j < buLongs.Count; j++)
+            {
+                Debug.Log("bulong id: "+ buLongs[j].bulongID+" is null: "+ buLongs[j].isNull);
+                if (!buLongs[j].isNull) buLongs[j].SetColorToOcVit(i);
+            }
+        }
+    
+    }
+    
+    void SetBulongNull() {
+        for (int i = 0; i < bulongFreeCount; i++)
+        {
+            listBulongAble = buLongs.Where(e => e.gameObject.activeSelf && !e.isNull).ToList();
+            bulongNullIndex = Random.Range(0, listBulongAble.Count);
+            listBulongAble[bulongNullIndex].isNull = true;
         }
     }
 
@@ -170,7 +198,7 @@ public class GamePlayController : MonoBehaviour
             BuLong buLong = GetBulong();
             buLong.transform.position = vectorPositionSpawn;
             buLong.SetLineIndex(lineIndex);
-            buLong.SetCountOcVit(ocVitCount);
+            buLong.SetTotalOcVit(ocVitCount);
             buLong.InitScaleup();
             lastPostion.x = 0;
         }
@@ -181,7 +209,7 @@ public class GamePlayController : MonoBehaviour
             BuLong newBuLong1 = GetBulong();
             newBuLong1.transform.position = vectorPositionSpawn;
             newBuLong1.SetLineIndex(lineIndex);
-            newBuLong1.SetCountOcVit(ocVitCount);
+            newBuLong1.SetTotalOcVit(ocVitCount);
             newBuLong1.InitScaleup();
             lastPostion.x = vectorPositionSpawn.x;
 
@@ -189,9 +217,8 @@ public class GamePlayController : MonoBehaviour
             BuLong newBuLong2 = GetBulong();
             newBuLong2.transform.position = vectorPositionSpawn;
             newBuLong2.SetLineIndex(lineIndex);
-            newBuLong2.SetCountOcVit(ocVitCount);
+            newBuLong2.SetTotalOcVit(ocVitCount);
             newBuLong2.InitScaleup();
-
         }
     }
 
@@ -253,7 +280,7 @@ public class GamePlayController : MonoBehaviour
                 return;
             }
             currentOcvit.ChooseOut(currentBulong.GetPointInOut(), speedOutSame, ChooseBulongOnSameOcVit);
-           
+
         }
         else SetDefault();
     }
@@ -287,27 +314,18 @@ public class GamePlayController : MonoBehaviour
             colorRemaining.Add(mOnCount);
         }
     }
-    int lastcolorID = -1;
-    int countSameColor = 0;
-    public int GetColor(int maxSameColor) {
+    public int GetColor() {
         int colorIndex = -1;
         colorRemOnCount = colorRemaining.Where(e => e.count > 0).ToList();
         colorIndex = Random.Range(0, colorRemOnCount.Count);
-        if (colorRemOnCount[colorIndex].colorID == lastcolorID)
-        {
-            countSameColor++;
-            if (countSameColor >= maxSameColor && colorRemOnCount.Count > 1)
-                return GetColor(maxSameColor);
-        }
-        else ResetSameColor();
-        colorRemaining.Find(e => e.colorID == colorRemOnCount[colorIndex].colorID).count--;
-        lastcolorID = colorRemOnCount[colorIndex].colorID;
         return colorRemOnCount[colorIndex].colorID;
     }
-    public void ResetSameColor()
-    {
-        lastcolorID = -1;
-        countSameColor = 0;
+    public bool ColorRemainCountCheckIsLastColor() {
+        return colorRemOnCount.Count <= 1;
+    }
+    public bool ColorRemainCountCheckIsLastColorHasMore() { return colorRemOnCount[0].count > 1; }
+    public void MinusColorRemain(int colorID) {
+        colorRemaining.Find(e => e.colorID == colorID).count--;
     }
     #endregion
 
@@ -318,8 +336,23 @@ public class GamePlayController : MonoBehaviour
         if (currentBulongDoneCount == totalColor)
         {
             Debug.Log("Done level");
+            if (state == 1)
+            {
+                currentLevel++;
+
+                Debug.Log(currentLevel);
+                state = 0;
+            }
+            else state = 1;
+            DOVirtual.DelayedCall(.5f, () => {
+                currentBulongDoneCount = 0;
+                levelData = levelDataConfig.GetLevelData(currentLevel);
+                SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
+            });
+           
         }
     }
+
     public void StartLevel() {
         currentBulongDoneCount = 0;
     }
@@ -342,6 +375,7 @@ public class GamePlayController : MonoBehaviour
             if (state == 1)
             {
                 levelData = levelDataConfig.GetLevelData(currentLevel);
+                Debug.Log("Current level: "+currentLevel);
                 SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
             }
             else {

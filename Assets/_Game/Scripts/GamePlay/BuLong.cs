@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using System.Linq;
 
+
 public class BuLong : MonoBehaviour
 {
     [SerializeField] int lineIndex;
@@ -32,17 +33,16 @@ public class BuLong : MonoBehaviour
     [SerializeField] Transform pointOut; //1.6f+2.8f*i+vectorSpaceOcVit.y*2;
     [SerializeField] Transform pointIn;
     [SerializeField] bool isDone;
+    [SerializeField] ParticleSystem myEffect;
+
 
     public void SetBulongID(int valueID) { bulongID = valueID; }
     public int GetBulongID() { return bulongID; }
     public void SetLineIndex(int lineIndex) { this.lineIndex = lineIndex; }
     public int GetLineIndex() { return lineIndex; }
-    public void SetCountOcVit(int countOcVit) {
-        this.countTotalOcVit = countOcVit;
-        countScaleUp = (int)(countTotalOcVit / 2);
-    }
 
     public void InitScaleup() {
+        myEffect.gameObject.SetActive(false);
         isDone = false;
         colliderY = 1.6f;
         Vector3 vectorCenterCollider = myCollider.center;
@@ -52,9 +52,9 @@ public class BuLong : MonoBehaviour
         {
             if (i >= objs.Count)
                 GetObjScale().localPosition = vetorOffset * i + vetorOffsetDe;
-            colliderY += 2.8f;
+            colliderY += vetorOffset.y;
         }
-
+        colliderY += .2f;
         vectorCenterCollider.y = colliderY / 2;
         myCollider.center = vectorCenterCollider;
         vectorSizerCollider.y = colliderY;
@@ -65,6 +65,8 @@ public class BuLong : MonoBehaviour
 
         for (int i = countScaleUp; i < objs.Count; i++)
             objs[i].gameObject.SetActive(false);
+        ParticleSystem.ShapeModule shapeModule = myEffect.shape;
+        shapeModule.length = colliderY;
     }
 
     Transform GetObjScale() {
@@ -83,19 +85,54 @@ public class BuLong : MonoBehaviour
     }
 
     #region Oc Vit
-    public void SetTotalOcVit(int ocVitCount) { totalOcVit = ocVitCount; }
+    public void SetTotalOcVit(int ocVitCount) {
+        totalOcVit = ocVitCount;
+        countMaxSameColor = totalOcVit / 2;
+        countScaleUp = (totalOcVit / 2);
+    }
     public void SpawnOcVit(int ocVitCount)
     {
-        totalOcVit = ocVitCount;
+        if (isNull)
+            return;
         for (int i = 0; i < ocVitCount; i++)
         {
             vectorSpawnOcvit = vetorOffsetDe + vectorSpaceOcVit * i;
             OcVit ocVit = GetOcVit();
-            int colorID = GamePlayController.Instance.GetColor(ocVitCount / 2);
-            MaterialData materialData = GamePlayController.Instance.GetMaterialData(colorID);
-            ocVit.InitData(vectorSpawnOcvit, materialData);
+            ocVit.InitData(vectorSpawnOcvit);
         }
-        GamePlayController.Instance.ResetSameColor();
+    }
+    int countSameColor;
+    int countMaxSameColor;
+    bool isLastColor;
+    bool lastColorMore;
+    public void SetColorToOcVit(int ocVitIndex) {
+        int colorID = GamePlayController.Instance.GetColor();
+        if (ocVitIndex > 0)
+        {
+            Debug.Log(ocVitIndex + " bulong iD" + bulongID);
+            if (listOcVit[ocVitIndex - 1].IsSameColor(colorID))
+            {
+                countSameColor++;
+                isLastColor = GamePlayController.Instance.ColorRemainCountCheckIsLastColor();
+                if (countSameColor >= countMaxSameColor && !isLastColor)
+                {
+                    SetColorToOcVit(ocVitIndex);
+                    return;
+                }
+                //lastColorMore = GamePlayController.Instance.ColorRemainCountCheckIsLastColorHasMore();
+                //if (isLastColor && lastColorMore)
+                //{
+
+                //}
+            }
+            else
+                countSameColor = 0;
+        }
+        else countSameColor = 0;
+        GamePlayController.Instance.MinusColorRemain(colorID);
+        MaterialData materialData = GamePlayController.Instance.GetMaterialData(colorID);
+        Debug.Log(ocVitIndex + " bulong iD" + bulongID);
+        listOcVit[ocVitIndex].InitMaterial(materialData);
     }
     Vector3 vectorSpawnOcvit;
     OcVit GetOcVit()
@@ -113,6 +150,7 @@ public class BuLong : MonoBehaviour
         return ocVit;
     }
     public void ReSetOcVit() {
+        isNull = false;
         for (int i = 0; i < listOcVit.Count; i++)
         {
             Destroy(listOcVit[i].gameObject);
@@ -149,6 +187,7 @@ public class BuLong : MonoBehaviour
         isDone = CheckIsDone();
         if (isDone)
         {
+            myEffect.gameObject.SetActive(true);
             GamePlayController.Instance.OnDoneBulong();
         }
         ocVit.transform.parent = trsOcVitParent;
