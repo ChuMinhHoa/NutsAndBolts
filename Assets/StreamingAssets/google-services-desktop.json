@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "859464228733",
+    "project_id": "idle-sushi-cat",
+    "storage_bucket": "idle-sushi-cat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859464228733:android:c9393aa57d81c02d78f614",
+        "android_client_info": {
+          "package_name": "com.abi.sushi.cat.tycoon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "859464228733-imo9cpthsabuhs4g06v6f5rvqkgi5nop.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH_JiN-hgnBEEHWag1UIFmeOwBmivpbDc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "859464228733-imo9cpthsabuhs4g06v6f5rvqkgi5nop.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
