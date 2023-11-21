@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id,@string/default_web_client_id">
+  <string name="gcm_defaultSenderId" translatable="false">859464228733</string>
+  <string name="google_storage_bucket" translatable="false">idle-sushi-cat.appspot.com</string>
+  <string name="project_id" translatable="false">idle-sushi-cat</string>
+  <string name="google_api_key" translatable="false">AIzaSyCH_JiN-hgnBEEHWag1UIFmeOwBmivpbDc</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyCH_JiN-hgnBEEHWag1UIFmeOwBmivpbDc</string>
+  <string name="google_app_id" translatable="false">1:859464228733:android:c9393aa57d81c02d78f614</string>
+  <string name="default_web_client_id" translatable="false">859464228733-imo9cpthsabuhs4g06v6f5rvqkgi5nop.apps.googleusercontent.com</string>
+</resources>
