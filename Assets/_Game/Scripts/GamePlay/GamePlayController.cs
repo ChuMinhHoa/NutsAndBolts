@@ -5,14 +5,6 @@ using System.Linq;
 using DG.Tweening;
 public class GamePlayController : MonoBehaviour
 {
-    public static GamePlayController Instance;
-    private void Awake()
-    {
-        if (Instance == null)
-            Instance = this;
-    }
-    [SerializeField] LevelDataConfig levelDataConfig;
-    [SerializeField] MateritalDataConfig materitalDataConfig;
 
     [SerializeField] Vector3 vectorSpace;
     [SerializeField] Vector3 vectorScale;
@@ -41,16 +33,18 @@ public class GamePlayController : MonoBehaviour
     int countRemain;
     int indexLine;
 
-    private void Start()
+    public void FirstOpenScene()
     {
+        currentLevel = ProfileManager.Instance.playerData.playerResource.GetLevel();
+        state = ProfileManager.Instance.playerData.playerResource.GetState();
         if (state == 1)
         {
-            levelData = levelDataConfig.GetLevelData(currentLevel);
+            levelData = ProfileManager.Instance.dataConfig.GetLevelData(currentLevel);
             SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
         }
         else
         {
-            levelData = levelDataConfig.GetLevelEasy();
+            levelData = ProfileManager.Instance.dataConfig.GetLevelEasy();
             SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
         }
     }
@@ -305,7 +299,7 @@ public class GamePlayController : MonoBehaviour
     List<MaterialOnCount> colorRemOnCount = new List<MaterialOnCount>();
     List<int> listColorIDs = new List<int>();
     void InitColor() {
-        listColorIDs = materitalDataConfig.GetMaterialRandom(totalColor);
+        listColorIDs = ProfileManager.Instance.dataConfig.GetRandomMaterial(totalColor);
         colorRemaining.Clear();
         for (int i = 0; i < totalColor; i++)
         {
@@ -351,36 +345,34 @@ public class GamePlayController : MonoBehaviour
         if (currentBulongDoneCount == totalColor)
         {
             Debug.Log("Done level");
-          
+            if (state == 1)
+                ProfileManager.Instance.playerData.playerResource.LevelUp(currentLevel + 1);
+            else 
+                ProfileManager.Instance.playerData.playerResource.ChangeState(1);
             DOVirtual.DelayedCall(.5f, () => {
                 currentBulongDoneCount = 0;
                 if (state == 1)
                 {
                     currentLevel++;
                     state = 0;
-                    levelData = levelDataConfig.GetLevelEasy();
+                    levelData = ProfileManager.Instance.dataConfig.GetLevelEasy();
                     SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
                 }
                 else
                 {
                     state = 1;
-                    levelData = levelDataConfig.GetLevelData(currentLevel);
+                    levelData = ProfileManager.Instance.dataConfig.GetLevelData(currentLevel);
                     SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
                 }
-               
-               
             });
            
         }
     }
 
-    public void StartLevel() {
-        currentBulongDoneCount = 0;
-    }
     #endregion
 
     public MaterialData GetMaterialData(int colorID) {
-        return materitalDataConfig.GetMaterialData(colorID);
+        return ProfileManager.Instance.dataConfig.GetMaterialData(colorID);
     }
 
     LevelData levelData;
@@ -395,11 +387,11 @@ public class GamePlayController : MonoBehaviour
         {
             if (state == 1)
             {
-                levelData = levelDataConfig.GetLevelData(currentLevel);
+                levelData = ProfileManager.Instance.dataConfig.GetLevelData(currentLevel);
                 SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
             }
             else {
-                levelData = levelDataConfig.GetLevelEasy();
+                levelData = ProfileManager.Instance.dataConfig.GetLevelEasy();
                 SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
             }
             

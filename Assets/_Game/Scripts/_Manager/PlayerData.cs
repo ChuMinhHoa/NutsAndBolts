@@ -5,20 +5,22 @@ using UnityEngine;
 [System.Serializable]
 public class PlayerData
 {
-    public SaveBase saveBase;
+    public PlayerResourceSave playerResource;
+    //public SaveBase saveBase;
 
     public void LoadData()
     {
-        saveBase.LoadData();
+        //saveBase.LoadData();
+        playerResource.LoadData();
     }
 
     public void SaveData()
     {
-        saveBase.SaveData();
+        //saveBase.SaveData();
     }
 
     public void Update()
     {
-        saveBase.Update();
+        //saveBase.Update();
     }
 }

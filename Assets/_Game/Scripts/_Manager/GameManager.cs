@@ -5,14 +5,21 @@ using UnityEngine;
 public class GameManager : Singleton<GameManager>
 {
     public CameraManager cameraManager;
-    void Start()
+    public GamePlayController gamePlayController;
+
+    protected override void Awake()
     {
-        
+        base.Awake();
+        UIManager.instance.ShowPanelHome();
+    }
+    private void Start()
+    {
+        InitDataLevelFirstOpen();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public void InitDataLevelFirstOpen() {
+        gamePlayController.FirstOpenScene();
     }
+
+
 }
