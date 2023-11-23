@@ -28,12 +28,15 @@ public class PlayerResourceSave : SaveBase
     public void LevelUp(int level) {
         playerLevel = level;
         stateOfLevel = 0;
+        EventManager.TriggerEvent(EventName.ChangeLevel.ToString());
+        EventManager.TriggerEvent(EventName.ChangeState.ToString());
         IsMarkChangeData();
         SaveData();
     }
 
     public void ChangeState(int state) {
         stateOfLevel = state;
+        EventManager.TriggerEvent(EventName.ChangeState.ToString());
         IsMarkChangeData();
         SaveData();
     }

@@ -143,10 +143,11 @@ public class UIManager : MonoBehaviour {
         go.SetActive(false);
     }
 
-    public void ShowPanelWinGame() {
+    public void ShowPanelWinGame(UnityAction actionDone) {
         isHasPopupOnScene = true;
         GameObject go = GetPanel(UIPanelType.PanelWinGame);
         go.SetActive(true);
+        go.GetComponent<PanelWinGame>().SetActionCallBack(actionDone);
     }
     public void ClosePanelWinGame() {
         isHasPopupOnScene = false;

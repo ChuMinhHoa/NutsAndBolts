@@ -179,7 +179,9 @@ public class BuLong : MonoBehaviour
             GameManager.Instance.gamePlayController.OnChooseCurrentOcVit(listOcVit[listOcVit.Count - 1], this);
         }
         else
+        {
             GameManager.Instance.gamePlayController.OnChooseOtherBulong(this, false);
+        }
     }
 
     public void ChooseSameBulong(float speed, UnityAction actionCallBack) {
@@ -188,19 +190,20 @@ public class BuLong : MonoBehaviour
         listOcVit[listOcVit.Count - 1].ChooseIn(pointIn, speed, actionCallBack);
     }
 
-    public void ChooseOtherBulong(OcVit ocVit, float speed, UnityAction actionCallBack) {
+    public void ChooseOtherBulong(OcVit ocVit, float speed, UnityAction actionCallBack, UnityAction actionDoneCallBack = null) {
         listOcVit.Add(ocVit);
         isDone = CheckIsDone();
         if (isDone)
-        {
             myEffect.gameObject.SetActive(true);
-            GameManager.Instance.gamePlayController.OnDoneBulong();
-        }
         ocVit.transform.parent = trsOcVitParent;
         ocVit.ChooseOut(pointOut, speed, ()=> {
             vectorSpawnOcvit = vetorOffsetDe + vectorSpaceOcVit * (listOcVit.Count - 1);
             pointIn.localPosition = vectorSpawnOcvit;
-            ocVit.ChooseIn(pointIn, speed, actionCallBack);
+            ocVit.ChooseIn(pointIn, speed,()=>{
+                actionCallBack();
+                if (isDone && actionDoneCallBack != null)
+                    actionDoneCallBack();
+            });
         });
     }
 
@@ -246,5 +249,16 @@ public class BuLong : MonoBehaviour
     public int SwitchColorOcVit(int colorID)
     {
         return listOcVit[listOcVit.Count - 1].SwitchColorID(colorID);
+    }
+
+    public bool CheckBulongIsDone()
+    {
+        if (isDone)
+        {
+            isDone = CheckIsDone();
+            myEffect.gameObject.SetActive(isDone);
+            return isDone;
+        }
+        return true;
     }
 }

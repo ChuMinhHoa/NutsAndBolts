@@ -12,7 +12,6 @@ public class OcVit : MonoBehaviour
     [SerializeField] ParticleSystem myEffect;
     MaterialData materialData;
     Material[] materials = new Material[1];
-    bool materialInited;
     public void InitData(Vector3 pointSpawn)
     {
         myEffect.Stop();
@@ -23,7 +22,6 @@ public class OcVit : MonoBehaviour
         this.materialData = materialData;
         materials[0] = materialData.material;
         meshRenderer.materials = materials;
-        materialInited = true;
     }
 
     public void ChooseOut(Transform pointOut, float speed, UnityAction actionCallBack = null) {

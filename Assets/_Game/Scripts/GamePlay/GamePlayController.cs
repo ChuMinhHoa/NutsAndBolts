@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using DG.Tweening;
+using UnityEngine.Events;
 public class GamePlayController : MonoBehaviour
 {
-
+    [Header("VECTOR 3")]
     [SerializeField] Vector3 vectorSpace;
     [SerializeField] Vector3 vectorScale;
     [SerializeField] Vector3 vectorPositionSpawn;
+    Vector3 lastPostion;
 
+    [Header("INT")]
     [SerializeField] List<int> countInLine = new List<int>();
     [SerializeField] int totalLine;
     [SerializeField] int countMaxInLine;
@@ -17,26 +20,45 @@ public class GamePlayController : MonoBehaviour
     [SerializeField] int ocVitCount;
     [SerializeField] int bulongFreeCount;
     [SerializeField] int totalColor;
-    [SerializeField] List<BuLong> buLongs;
-    [SerializeField] BuLong bulongPref;
-    [SerializeField] Transform parentSpawnBulong;
-
     [SerializeField] int currentLevel;
     [SerializeField] int state;
+    int lineOdd;
+    int lineOddTemp;
+    int countTemp;
+    int countRemain;
+    int indexLine;
+    int countUndoRemain;
 
+    [Header("FLOAT")]
     [SerializeField] float speedOut;
     [SerializeField] float speedIn;
     [SerializeField] float speedOutSame;
     [SerializeField] float speedInSame;
 
-    int countTemp;
-    int countRemain;
-    int indexLine;
+    [Header("OTHER")]
+    public bool onChoosed;
+    public bool detectSelect;
+    bool isEven;
+
+    LevelData levelData;
+    OcVit currentOcvit;
+    BuLong currentBulong;
+    OcVit ocVitCheck;
+
+    [SerializeField] List<BuLong> buLongs;
+    [SerializeField] BuLong bulongPref;
+    [SerializeField] Transform parentSpawnBulong;
+
+    [Header("COLOR RANDOM")]
+    List<MaterialOnCount> colorRemaining = new List<MaterialOnCount>();
+    List<MaterialOnCount> colorRemOnCount = new List<MaterialOnCount>();
+    List<int> listColorIDs = new List<int>();
 
     public void FirstOpenScene()
     {
         currentLevel = ProfileManager.Instance.playerData.playerResource.GetLevel();
         state = ProfileManager.Instance.playerData.playerResource.GetState();
+        countUndoRemain = 5;
         if (state == 1)
         {
             levelData = ProfileManager.Instance.dataConfig.GetLevelData(currentLevel);
@@ -48,10 +70,7 @@ public class GamePlayController : MonoBehaviour
             SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
         }
     }
-    bool isEven;
-    Vector3 lastPostion;
-    int lineOdd;
-    int lineOddTemp;
+
 
     public void SetDataLevel(int totalLine, int totalCount, int countMaxInLine, int ocVitCount, int bulongFreeCount) {
         for (int i = 0; i < buLongs.Count; i++)
@@ -132,9 +151,9 @@ public class GamePlayController : MonoBehaviour
                 if (!buLongs[j].isNull && buLongs[j].gameObject.activeSelf) buLongs[j].SetColorToOcVit(i);
             }
         }
-    
+
     }
-    
+
     void SetBulongNull() {
         for (int i = 0; i < bulongFreeCount; i++)
         {
@@ -232,16 +251,12 @@ public class GamePlayController : MonoBehaviour
     #endregion
 
     #region Controll
-    OcVit currentOcvit;
-    BuLong currentBulong;
-    OcVit ocVitCheck;
-    public bool onChoosed;
-    public bool detectSelect;
-    public void OnChooseCurrentOcVit(OcVit ocVit, BuLong bulong) {
+    public List<StepMoveOcVit> stepMoveOcVits = new List<StepMoveOcVit>();
+    public void OnChooseCurrentOcVit(OcVit ocVit, BuLong bulong, UnityAction actionDone = null) {
         currentBulong = bulong;
         currentOcvit = ocVit;
         onChoosed = true;
-        currentOcvit.ChooseOut(bulong.GetPointInOut(), speedOut);
+        currentOcvit.ChooseOut(bulong.GetPointInOut(), speedOut, actionDone);
     }
     BuLong bulongOnChoose;
     public void OnChooseOtherBulong(BuLong bulong, bool isSame) {
@@ -254,12 +269,26 @@ public class GamePlayController : MonoBehaviour
                 SetDefault();
                 return;
             }
+            AddStepMove(currentOcvit, currentBulong, bulong);
             bulongOnChoose = bulong;
             currentBulong.RemoveOcvit(currentOcvit);
             detectSelect = true;
-            if (isSame) bulong.ChooseOtherBulong(currentOcvit, speedInSame, OnMoveOcVitDone);
-            else bulong.ChooseOtherBulong(currentOcvit, speedIn, OnMoveOcVitDone);
+            if (isSame) bulong.ChooseOtherBulong(currentOcvit, speedInSame, OnMoveOcVitDone, GameManager.Instance.gamePlayController.OnDoneBulong);
+            else bulong.ChooseOtherBulong(currentOcvit, speedIn, OnMoveOcVitDone, GameManager.Instance.gamePlayController.OnDoneBulong);
         }
+    }
+
+    public void AddStepMove(OcVit ocVit, BuLong lastBulong, BuLong currentBulong) {
+        StepMoveOcVit step = new StepMoveOcVit();
+        step.ocVit = ocVit;
+        step.lastBulong = lastBulong;
+        step.currentBulong = currentBulong;
+        stepMoveOcVits.Add(step);
+    }
+
+    public void RemoveStepMove()
+    {
+        stepMoveOcVits.Remove(stepMoveOcVits[stepMoveOcVits.Count - 1]);
     }
 
     void OnMoveOcVitDone() {
@@ -278,7 +307,10 @@ public class GamePlayController : MonoBehaviour
         else SetDefault();
     }
 
-    void ChooseBulongOnSameOcVit() { OnChooseOtherBulong(bulongOnChoose, true); }
+    void ChooseBulongOnSameOcVit()
+    {
+        OnChooseOtherBulong(bulongOnChoose, true);
+    }
 
     void SetDefault() {
         onChoosed = false;
@@ -287,6 +319,7 @@ public class GamePlayController : MonoBehaviour
         currentBulong = null;
         currentOcvit = null;
         detectSelect = false;
+        EventManager.TriggerEvent(EventName.CheckAbleOfButtonUndo.ToString());
     }
 
     void ChooseTheSameBulong(BuLong buLong) {
@@ -295,9 +328,7 @@ public class GamePlayController : MonoBehaviour
     #endregion
 
     #region Random Color
-    List<MaterialOnCount> colorRemaining = new List<MaterialOnCount>();
-    List<MaterialOnCount> colorRemOnCount = new List<MaterialOnCount>();
-    List<int> listColorIDs = new List<int>();
+
     void InitColor() {
         listColorIDs = ProfileManager.Instance.dataConfig.GetRandomMaterial(totalColor);
         colorRemaining.Clear();
@@ -344,29 +375,31 @@ public class GamePlayController : MonoBehaviour
         currentBulongDoneCount++;
         if (currentBulongDoneCount == totalColor)
         {
-            Debug.Log("Done level");
+            currentBulongDoneCount = 0;
+            stepMoveOcVits.Clear();
+            countUndoRemain = 5;
+            SetDefault();
             if (state == 1)
+            {
                 ProfileManager.Instance.playerData.playerResource.LevelUp(currentLevel + 1);
-            else 
+                UIManager.instance.ShowPanelWinGame(ChangeLevel);
+            }
+            else
+            {
                 ProfileManager.Instance.playerData.playerResource.ChangeState(1);
-            DOVirtual.DelayedCall(.5f, () => {
-                currentBulongDoneCount = 0;
-                if (state == 1)
-                {
-                    currentLevel++;
-                    state = 0;
-                    levelData = ProfileManager.Instance.dataConfig.GetLevelEasy();
-                    SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
-                }
-                else
-                {
-                    state = 1;
-                    levelData = ProfileManager.Instance.dataConfig.GetLevelData(currentLevel);
-                    SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
-                }
-            });
-           
+                state = 1;
+                levelData = ProfileManager.Instance.dataConfig.GetLevelData(currentLevel);
+                SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
+            }
+
         }
+    }
+
+    void ChangeLevel() {
+        currentLevel++;
+        state = 0;
+        levelData = ProfileManager.Instance.dataConfig.GetLevelEasy();
+        SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
     }
 
     #endregion
@@ -375,31 +408,59 @@ public class GamePlayController : MonoBehaviour
         return ProfileManager.Instance.dataConfig.GetMaterialData(colorID);
     }
 
-    LevelData levelData;
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.A))
+    public void ReplayLevel() {
+        currentBulongDoneCount = 0;
+        if (state == 1)
         {
-            AddBulongToLine();
+            levelData = ProfileManager.Instance.dataConfig.GetLevelData(currentLevel);
+            SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
         }
+        else
+        {
+            levelData = ProfileManager.Instance.dataConfig.GetLevelEasy();
+            SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
+        }
+        SetDefault();
+        stepMoveOcVits.Clear();
+    }
+    public bool CheckCanUndo() {return stepMoveOcVits.Count > 0; }
+    public bool CheckShowObjUndo() {return countUndoRemain==0; }
+    public void Undo(UnityAction actionCallbackUndo, bool isADS = false) {
+        if (countUndoRemain == 0 && !isADS)
+        {
+            EventManager.TriggerEvent(EventName.CheckAbleOfButtonUndo.ToString());
+            return;
+        }
+        OnMoveBack(stepMoveOcVits[stepMoveOcVits.Count - 1].ocVit, stepMoveOcVits[stepMoveOcVits.Count - 1].currentBulong, stepMoveOcVits[stepMoveOcVits.Count - 1].lastBulong, actionCallbackUndo);
+        if (!isADS) countUndoRemain--;
+    }
 
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            if (state == 1)
-            {
-                levelData = ProfileManager.Instance.dataConfig.GetLevelData(currentLevel);
-                SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
-            }
-            else {
-                levelData = ProfileManager.Instance.dataConfig.GetLevelEasy();
-                SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
-            }
-            
-        }
+    void OnMoveBack(OcVit ocVit, BuLong currentBulong, BuLong lastBulong, UnityAction actionCallBackUndo) {
+        OnChooseCurrentOcVit(ocVit, currentBulong, ()=> {
+            ChooseOtherBulongOnMoveBack(lastBulong);
+            actionCallBackUndo();
+            if (!currentBulong.CheckBulongIsDone()) currentBulongDoneCount--;
+        });
+    }
+
+    void ChooseOtherBulongOnMoveBack(BuLong buLong) {
+        bulongOnChoose = buLong;
+        currentBulong.RemoveOcvit(currentOcvit);
+        detectSelect = true;
+        buLong.ChooseOtherBulong(currentOcvit, speedInSame, SetDefault, GameManager.Instance.gamePlayController.OnDoneBulong);
+        buLong.CheckBulongIsDone();
+        RemoveStepMove();
     }
 }
 [System.Serializable]
 public class MaterialOnCount {
     public int colorID;
     public int count;
+}
+
+[System.Serializable]
+public class StepMoveOcVit {
+    public BuLong currentBulong;
+    public OcVit ocVit;
+    public BuLong lastBulong;
 }
