@@ -4,6 +4,7 @@ using UnityEngine;
 [System.Serializable]
 public class PlayerResourceSave : SaveBase
 {
+    public bool isCheatADS;
     public int playerLevel;
     public int stateOfLevel;
     public override void LoadData()
@@ -16,14 +17,18 @@ public class PlayerResourceSave : SaveBase
             PlayerResourceSave data = JsonUtility.FromJson<PlayerResourceSave>(strJsonData);
             playerLevel = data.playerLevel;
             stateOfLevel = data.stateOfLevel;
+            isCheatADS = data.isCheatADS;
         }
         else {
             playerLevel = 0;
             stateOfLevel = 0;
+            isCheatADS = false;
             IsMarkChangeData();
             SaveData();
         }
     }
+
+    public bool IsCheatADS() { return isCheatADS; }
 
     public void LevelUp(int level) {
         playerLevel = level;

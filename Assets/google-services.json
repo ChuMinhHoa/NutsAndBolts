@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "859464228733",
-    "project_id": "idle-sushi-cat",
-    "storage_bucket": "idle-sushi-cat.appspot.com"
+    "project_number": "805871505941",
+    "project_id": "nuts-bolts-sort",
+    "storage_bucket": "nuts-bolts-sort.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:859464228733:android:c9393aa57d81c02d78f614",
+        "mobilesdk_app_id": "1:805871505941:android:902db5ec2b84b487b8b41c",
         "android_client_info": {
-          "package_name": "com.abi.sushi.cat.tycoon"
+          "package_name": "com.jis.nuts.bolts.sort.puzzle"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "859464228733-imo9cpthsabuhs4g06v6f5rvqkgi5nop.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCH_JiN-hgnBEEHWag1UIFmeOwBmivpbDc"
+          "current_key": "AIzaSyAN6zh1qI9Ub79_EBaE0zkk4l98zYxCiAo"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "859464228733-imo9cpthsabuhs4g06v6f5rvqkgi5nop.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

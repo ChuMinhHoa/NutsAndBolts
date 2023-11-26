@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 074fc6e48c4aeee4eaaa708414d919ed, type: 3}
   m_Name: SDKAdsSetup
   m_EditorClassIdentifier: 
-  IsActiveAppsflyer: 1
+  IsActiveAppsflyer: 0
   maxAdsSetup:
     sdkKey:
-      AndroidID: ZoNyqu_piUmpl33-qkoIfRp6MTZGW9M5xk1mb1ZIWK6FN9EBu0TXSHeprC3LMPQI7S3kTc1-x7DJGSV8S-gvFJ
+      AndroidID: _2WIIxqSpqZ6toZysDtbAT6SIUlIrCr5WBKPcTF8Inh_kvIMQmnUe5Pd4hPbgsflLofW8ikPA_dVCRQuP8k4oH
     interstitialAdUnitID:
-      AndroidID: ebae7ba93d1b42cd
+      AndroidID: dd00e39c63ed1595
     rewardedAdUnitID:
-      AndroidID: a723f13529f5e0f3
+      AndroidID: 6f0a249c96484af9
     bannerAdUnitID:
-      AndroidID: 201f5e401931681c
+      AndroidID: 089d9c2c6ffe5149
     mrecAdUnitID:
       AndroidID: e79c7c6f7270943d
     appOpenAdUnitID:

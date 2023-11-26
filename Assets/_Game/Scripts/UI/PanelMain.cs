@@ -37,10 +37,12 @@ public class PanelMain : UIPanel
 
     void ChangeTextLevel() {
         txtCurrentLevel.text = "LEVEL " + (ProfileManager.Instance.playerData.playerResource.GetLevel() + 1).ToString();
+        btnAddBulong.interactable = true;
     }
 
     void ChangeTextState() {
         txtState.text = "STATE " + ProfileManager.Instance.playerData.playerResource.GetState().ToString();
+        btnAddBulong.interactable = true;
     }
 
     void CheckAbleUndo()
@@ -59,7 +61,12 @@ public class PanelMain : UIPanel
         btnUndo.interactable = false;
         if (objADSUndo.activeSelf)
         {
-            AdsManager.Instance.ShowRewardVideo(WatchVideoRewardType.Undo.ToString(), OnUndoADSSuccess, OnUndoADSFail);
+            if (ProfileManager.Instance.playerData.playerResource.IsCheatADS())
+            {
+                OnUndoADSSuccess();
+            }
+            else
+                AdsManager.Instance.ShowRewardVideo(WatchVideoRewardType.Undo.ToString(), OnUndoADSSuccess, OnUndoADSFail);
         }else
             GameManager.Instance.gamePlayController.Undo(ActionCallBackUndo, false);
     }
@@ -79,7 +86,21 @@ public class PanelMain : UIPanel
     }
 
     void AddBulong() {
+        if (!GameManager.Instance.gamePlayController.CheckCanAddBulong())
+            return;
+        if (ProfileManager.Instance.playerData.playerResource.IsCheatADS())
+        {
+            WatchAdsAddBulongDone();
+        }
+        else
+        {
+            AdsManager.Instance.ShowRewardVideo(WatchVideoRewardType.AddBulong.ToString(), WatchAdsAddBulongDone);
+        }
+    }
+
+    public void WatchAdsAddBulongDone() {
         GameManager.Instance.gamePlayController.AddBulongToLine();
+        btnAddBulong.interactable = GameManager.Instance.gamePlayController.CheckCanAddBulong();
     }
 
     void Home() {

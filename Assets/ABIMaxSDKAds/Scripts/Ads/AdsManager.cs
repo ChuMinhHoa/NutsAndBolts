@@ -22,6 +22,8 @@ namespace SDK {
     }
     public enum WatchVideoRewardType {
         NONE,
+        Undo,
+        AddBulong
     }
     
     [ScriptOrder(-99)]
@@ -130,9 +132,10 @@ namespace SDK {
             if(!GetSelectedMediation(AdsType.MREC).IsInited) {
                 GetSelectedMediation(AdsType.MREC).Init();
             }
-            if(!GetSelectedMediation(AdsType.APP_OPEN).IsInited) {
-                GetSelectedMediation(AdsType.APP_OPEN).Init();
-            }
+            if (GetSelectedMediation(AdsType.APP_OPEN) != null)
+                if(!GetSelectedMediation(AdsType.APP_OPEN).IsInited) {
+                    GetSelectedMediation(AdsType.APP_OPEN).Init();
+                }
         }
         public void InitAdsType() {
             //Setup Interstitial
@@ -266,7 +269,7 @@ namespace SDK {
             }
             m_InterstitialAdCloseCallback = closedCallback;
             if (isTracking) {
-                ABIAnalyticsManager.Instance.TrackAdsInterstitial_ClickOnButton();
+                //ABIAnalyticsManager.Instance.TrackAdsInterstitial_ClickOnButton();
             }
             if (IsInterstitialAdLoaded()) {
                 ShowSelectedInterstitialAd(showSuccessCallback);
@@ -290,7 +293,7 @@ namespace SDK {
         public void OnInterstitialAdSuccessToLoad() {
             m_InterstitialAdsConfig.RefreshLoadAds();
             m_InterstitialAdLoadSuccessCallback?.Invoke();
-            ABIAnalyticsManager.Instance.TrackAdsInterstitial_LoadedSuccess();
+            //ABIAnalyticsManager.Instance.TrackAdsInterstitial_LoadedSuccess();
         }
         private void OnInterstitialAdFailedToLoad() {
             ResetAdsLoadingCooldown();
@@ -298,13 +301,13 @@ namespace SDK {
         }
         private void OnInterstitialAdShowSuccess() {
             m_InterstitialAdShowSuccessCallback?.Invoke();
-            ABIAnalyticsManager.Instance.TrackAdsInterstitial_ShowSuccess();
+            //ABIAnalyticsManager.Instance.TrackAdsInterstitial_ShowSuccess();
             MarkShowingAds(true);
         }
         private void OnInterstitialAdShowFail() {
             m_InterstitialAdsConfig.MarkReloadFail();
             m_InterstitialAdShowFailCallback?.Invoke();
-            ABIAnalyticsManager.Instance.TrackAdsInterstitial_ShowFail();
+            //ABIAnalyticsManager.Instance.TrackAdsInterstitial_ShowFail();
         }
         private void OnInterstitialAdClosed() {
             RequestInterstitial();
@@ -425,7 +428,7 @@ namespace SDK {
                     ResetRewardInterruptCount();
                 }, false, true);
             } else {
-                ABIAnalyticsManager.Instance.TrackAdsReward_ClickOnButton();
+                //ABIAnalyticsManager.Instance.TrackAdsReward_ClickOnButton();
                 if (IsReadyToShowRewardVideo()) {
                     GetSelectedMediation(AdsType.REWARDED).ShowRewardVideoAd(OnRewardVideoEarnSuccess, OnRewardVideoShowFail);
                 }
@@ -439,20 +442,20 @@ namespace SDK {
                 m_RewardedVideoEarnSuccessCallback();
             }
             m_RewardInterruptCountTime++;
-            ABIAnalyticsManager.Instance.TrackAdsReward_ShowCompleted(m_RewardedPlacement);
+            //ABIAnalyticsManager.Instance.TrackAdsReward_ShowCompleted(m_RewardedPlacement);
         }
         private void OnRewardVideoStart() {
             if (m_RewardedVideoShowStartCallback != null) {
                 m_RewardedVideoShowStartCallback();
             }
-            ABIAnalyticsManager.Instance.TrackAdsReward_StartShow();
+            //ABIAnalyticsManager.Instance.TrackAdsReward_StartShow();
             MarkShowingAds(true);
         }
         private void OnRewardVideoShowFail() {
             if (m_RewardedVideoShowFailCallback != null) {
                 m_RewardedVideoShowFailCallback();
             }
-            ABIAnalyticsManager.Instance.TrackAdsReward_ShowFail();
+            //ABIAnalyticsManager.Instance.TrackAdsReward_ShowFail();
         }
         private void OnRewardVideoClosed() {
             ResetAdsInterstitialCappingTime();
@@ -467,7 +470,7 @@ namespace SDK {
             if (m_RewardedVideoLoadSuccessCallback != null) {
                 m_RewardedVideoLoadSuccessCallback();
             }
-            ABIAnalyticsManager.Instance.TrackAdsReward_LoadSuccess();
+            //ABIAnalyticsManager.Instance.TrackAdsReward_LoadSuccess();
         }
         private void OnRewardVideoLoadFail() {
             ResetAdsLoadingCooldown();
@@ -712,7 +715,7 @@ namespace SDK {
         
         private void OnAdRevenuePaidEvent(ImpressionData impressionData) {
             Debug.Log("Paid Ad Revenue - Ads Type = " + impressionData.ad_type);
-            ABIAnalyticsManager.TrackAdImpression(impressionData);
+            //ABIAnalyticsManager.TrackAdImpression(impressionData);
 #if UNITY_APPSFLYER
             ABIAppsflyerManager.TrackAppsflyerAdRevenue(impressionData);
 #endif

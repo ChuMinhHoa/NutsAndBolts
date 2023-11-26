@@ -423,8 +423,9 @@ public class GamePlayController : MonoBehaviour
         SetDefault();
         stepMoveOcVits.Clear();
     }
-    public bool CheckCanUndo() {return stepMoveOcVits.Count > 0; }
-    public bool CheckShowObjUndo() {return countUndoRemain==0; }
+    public bool CheckCanUndo() { return stepMoveOcVits.Count > 0; }
+    public bool CheckShowObjUndo() { return countUndoRemain == 0; }
+    public bool CheckCanAddBulong() { return totalLine * countMaxInLine > buLongs.Count; }
     public void Undo(UnityAction actionCallbackUndo, bool isADS = false) {
         if (countUndoRemain == 0 && !isADS)
         {
