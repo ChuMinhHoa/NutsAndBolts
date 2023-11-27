@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using TMPro;
+using UIAnimation;
 public class PanelHome : UIPanel
 {
     [SerializeField] Button btnPlay;
     [SerializeField] Button btnSetting;
+    [SerializeField] TextMeshProUGUI txtCurrentLevel;
     public override void Awake()
     {
         panelType = UIPanelType.PanelHome;
@@ -15,12 +17,22 @@ public class PanelHome : UIPanel
         btnSetting.onClick.AddListener(ShowPanelSetting);
     }
 
+    private void OnEnable()
+    {
+        txtCurrentLevel.text = "LEVEL " + (ProfileManager.Instance.playerData.playerResource.playerLevel + 1).ToString();
+    }
+
     void PlayGame() {
-        UIManager.instance.ClosePanelHome();
-        UIManager.instance.ShowPanelMain();
+        UIAnimationController.BtnAnimZoomBasic(btnPlay.transform, .25f, ()=> {
+            GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
+            UIManager.instance.ClosePanelHome();
+            UIManager.instance.ShowPanelMain();
+        });
     }
 
     void ShowPanelSetting() {
+        UIAnimationController.BtnAnimZoomBasic(btnSetting.transform, .25f);
+        GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
         UIManager.instance.ShowPanelSetting();
     }
 }

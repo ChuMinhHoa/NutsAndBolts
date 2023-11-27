@@ -82,7 +82,8 @@ namespace MoreMountains.NiceVibrations
 		/// </summary>
 		public virtual void TriggerVibrate()
 		{
-			MMVibrationManager.Vibrate ();
+			if (ProfileManager.Instance.playerData.playerResource.GetOnVibration())
+				MMVibrationManager.Vibrate ();
 		}
 
 		/// <summary>
@@ -90,7 +91,8 @@ namespace MoreMountains.NiceVibrations
 		/// </summary>
 		public virtual void TriggerSelection()
 		{
-			MMVibrationManager.Haptic (HapticTypes.Selection);
+			if (ProfileManager.Instance.playerData.playerResource.GetOnVibration())
+				MMVibrationManager.Haptic (HapticTypes.Selection);
 		}
 
 		/// <summary>
@@ -98,7 +100,8 @@ namespace MoreMountains.NiceVibrations
 		/// </summary>
 		public virtual void TriggerSuccess()
 		{
-			MMVibrationManager.Haptic (HapticTypes.Success);
+            if (ProfileManager.Instance.playerData.playerResource.GetOnVibration())
+				MMVibrationManager.Haptic (HapticTypes.Success);
 		}
 
 		/// <summary>
@@ -106,7 +109,8 @@ namespace MoreMountains.NiceVibrations
 		/// </summary>
 		public virtual void TriggerWarning()
 		{
-			MMVibrationManager.Haptic (HapticTypes.Warning);
+			if (ProfileManager.Instance.playerData.playerResource.GetOnVibration())
+				MMVibrationManager.Haptic (HapticTypes.Warning);
 		}
 
 		/// <summary>
@@ -114,7 +118,8 @@ namespace MoreMountains.NiceVibrations
 		/// </summary>
 		public virtual void TriggerFailure()
 		{
-			MMVibrationManager.Haptic (HapticTypes.Failure);
+			if (ProfileManager.Instance.playerData.playerResource.GetOnVibration())
+				MMVibrationManager.Haptic (HapticTypes.Failure);
 		}
 
 		/// <summary>
@@ -122,7 +127,8 @@ namespace MoreMountains.NiceVibrations
 		/// </summary>
 		public virtual void TriggerLightImpact()
 		{
-			MMVibrationManager.Haptic (HapticTypes.LightImpact);
+			if (ProfileManager.Instance.playerData.playerResource.GetOnVibration())
+				MMVibrationManager.Haptic (HapticTypes.LightImpact);
 		}
 
 		/// <summary>
@@ -130,7 +136,8 @@ namespace MoreMountains.NiceVibrations
 		/// </summary>
 		public virtual void TriggerMediumImpact()
 		{
-			MMVibrationManager.Haptic (HapticTypes.MediumImpact);
+			if (ProfileManager.Instance.playerData.playerResource.GetOnVibration())
+				MMVibrationManager.Haptic (HapticTypes.MediumImpact);
 		}
 
 		/// <summary>
@@ -138,7 +145,8 @@ namespace MoreMountains.NiceVibrations
 		/// </summary>
 		public virtual void TriggerHeavyImpact()
 		{
-			MMVibrationManager.Haptic (HapticTypes.HeavyImpact);
+			if (ProfileManager.Instance.playerData.playerResource.GetOnVibration())
+				MMVibrationManager.Haptic (HapticTypes.HeavyImpact);
 		}
 	}
 }

@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using System.Linq;
-
+using UnityEngine.EventSystems;
+using DG.Tweening;
 
 public class BuLong : MonoBehaviour
 {
@@ -12,6 +13,11 @@ public class BuLong : MonoBehaviour
     [SerializeField] int countTotalOcVit;
     [SerializeField] int countScaleUp;
     public bool isNull;
+    public bool levelIsSecret;
+    //[Header("==============FailPanel==============")]
+    //public GameObject objFull;
+    //public GameObject objFail;
+
     [Header("==============ScaleUp==============")]
     [SerializeField] BoxCollider myCollider; //y = 2.8f * i + 1.6f; Pivot.y = y/2;
     [SerializeField] List<Transform> objs;
@@ -33,6 +39,7 @@ public class BuLong : MonoBehaviour
     [SerializeField] Transform pointOut; //1.6f+2.8f*i+vectorSpaceOcVit.y*2;
     [SerializeField] Transform pointIn;
     [SerializeField] bool isDone;
+    [SerializeField] bool addDone;
     [SerializeField] ParticleSystem myEffect;
 
 
@@ -41,7 +48,8 @@ public class BuLong : MonoBehaviour
     public void SetLineIndex(int lineIndex) { this.lineIndex = lineIndex; }
     public int GetLineIndex() { return lineIndex; }
 
-    public void InitScaleup() {
+    public void InitScaleup(bool levelSecret = false) {
+        levelIsSecret = levelSecret;
         for (int i = 0; i < objs.Count; i++)
         {
             objs[i].gameObject.SetActive(false);
@@ -90,7 +98,7 @@ public class BuLong : MonoBehaviour
     #region Oc Vit
     public void SetTotalOcVit(int ocVitCount) {
         totalOcVit = ocVitCount;
-        countMaxSameColor = totalOcVit / 2 ;
+        countMaxSameColor = totalOcVit / 2;
         countScaleUp = (totalOcVit / 2);
     }
     public void SpawnOcVit(int ocVitCount)
@@ -101,7 +109,7 @@ public class BuLong : MonoBehaviour
         {
             vectorSpawnOcvit = vetorOffsetDe + vectorSpaceOcVit * i;
             OcVit ocVit = GetOcVit();
-            ocVit.InitData(vectorSpawnOcvit);
+            ocVit.InitData(vectorSpawnOcvit, levelIsSecret && i < ocVitCount - 1);
         }
     }
     int countSameColor;
@@ -156,7 +164,10 @@ public class BuLong : MonoBehaviour
         return ocVit;
     }
     public void ReSetOcVit() {
+        addDone = false;
+        isDone = false;
         isNull = false;
+        levelIsSecret = false;
         for (int i = 0; i < listOcVit.Count; i++)
         {
             Destroy(listOcVit[i].gameObject);
@@ -170,6 +181,8 @@ public class BuLong : MonoBehaviour
 
     private void OnMouseUp()
     {
+        if (EventSystem.current.IsPointerOverGameObject() || EventSystem.current.IsPointerOverGameObject(0))
+            return;
         if (isDone || GameManager.Instance.gamePlayController.detectSelect)
             return;
         if (!GameManager.Instance.gamePlayController.onChoosed)
@@ -184,35 +197,53 @@ public class BuLong : MonoBehaviour
         }
     }
 
-    public void ChooseSameBulong(float speed, UnityAction actionCallBack) {
-        vectorSpawnOcvit = vetorOffsetDe + vectorSpaceOcVit * (listOcVit.Count - 1);
+    public void ChooseSameBulong(OcVit ocvit, float speed, UnityAction actionCallBack) {
+        vectorSpawnOcvit = vetorOffsetDe + vectorSpaceOcVit * (listOcVit.IndexOf(ocvit));
         pointIn.localPosition = vectorSpawnOcvit;
-        listOcVit[listOcVit.Count - 1].ChooseIn(pointIn, speed, actionCallBack);
+        ocvit.ChooseIn(pointIn, speed, actionCallBack);
     }
 
     public void ChooseOtherBulong(OcVit ocVit, float speed, UnityAction actionCallBack, UnityAction actionDoneCallBack = null) {
         listOcVit.Add(ocVit);
-        isDone = CheckIsDone();
-        if (isDone)
-            myEffect.gameObject.SetActive(true);
+        if (!isDone)
+            isDone = CheckIsDone();
+        myEffect.gameObject.SetActive(isDone);
+        GameManager.Instance.audioManager.PlaySound(SoundId.OcVitMoveDone);
+        GameManager.Instance.vibrationManager.TriggerSuccess();
         ocVit.transform.parent = trsOcVitParent;
-        ocVit.ChooseOut(pointOut, speed, ()=> {
+        ocVit.DoJump(pointOut, speed, () => {
             vectorSpawnOcvit = vetorOffsetDe + vectorSpaceOcVit * (listOcVit.Count - 1);
             pointIn.localPosition = vectorSpawnOcvit;
-            ocVit.ChooseIn(pointIn, speed,()=>{
-                actionCallBack();
-                if (isDone && actionDoneCallBack != null)
+            actionCallBack();
+            ocVit.ChooseIn(pointIn, speed, () => {
+                if (isDone && actionDoneCallBack != null && !addDone)
+                {
+                    addDone = true;
                     actionDoneCallBack();
+                }
             });
+        });
+    }
+
+    public void ChooseOtherBulongOnUndo(OcVit ocVit, float speed, UnityAction actionCallBack) {
+        listOcVit.Add(ocVit);
+        GameManager.Instance.audioManager.PlaySound(SoundId.OcVitMoveDone);
+        GameManager.Instance.vibrationManager.TriggerSuccess();
+        ocVit.transform.parent = trsOcVitParent;
+        ocVit.DoJump(pointOut, speed, () => {
+            vectorSpawnOcvit = vetorOffsetDe + vectorSpaceOcVit * (listOcVit.Count - 1);
+            pointIn.localPosition = vectorSpawnOcvit;
+            ocVit.ChooseIn(pointIn, speed, actionCallBack);
         });
     }
 
     bool CheckIsDone() {
         if (listOcVit.Count < totalOcVit)
             return false;
-
-        for (int i = 1; i < listOcVit.Count; i++)
+        for (int i = 0; i < listOcVit.Count; i++)
         {
+            if (listOcVit[i].IsOnSecretMode())
+                return false;
             if (!listOcVit[0].IsSameColor(listOcVit[i].GetColor()))
                 return false;
         }
@@ -226,6 +257,16 @@ public class BuLong : MonoBehaviour
             return true;
         return listOcVit[listOcVit.Count - 1].IsSameColor(ocvit.GetColor());
     }
+    public OcVit GetOcVitBehind() {
+        if (listOcVit.Count == 0)
+            return null;
+        return listOcVit[listOcVit.Count - 1];
+    }
+    public OcVit GetOcVitBehind(int currentIndex) {
+        if (listOcVit.Count == 0 || listOcVit.Count - currentIndex - 1 < 0)
+            return null;
+        return listOcVit[listOcVit.Count - currentIndex - 1];
+    }
     public OcVit IsSameColorWithCurrentOcvit(OcVit ocVit) {
         if (listOcVit.Count == 0)
             return null;
@@ -238,6 +279,8 @@ public class BuLong : MonoBehaviour
         listOcVit.Remove(ocvit);
     }
     public bool CheckBulongHasColor(int colorID) {
+        if (listOcVit.Count == 0)
+            return true;
         for (int i = 0; i < listOcVit.Count; i++)
         {
             if (colorID == listOcVit[i].GetColor())
@@ -250,15 +293,27 @@ public class BuLong : MonoBehaviour
     {
         return listOcVit[listOcVit.Count - 1].SwitchColorID(colorID);
     }
-
-    public bool CheckBulongIsDone()
-    {
+    public bool OnDoneMode() {
         if (isDone)
         {
-            isDone = CheckIsDone();
-            myEffect.gameObject.SetActive(isDone);
-            return isDone;
+            myEffect.gameObject.SetActive(false);
+            isDone = false;
+            return true;
         }
-        return true;
+        return false;
+    }
+    public bool CheckBulongIsDone()
+    {
+        isDone = CheckIsDone();
+        myEffect.gameObject.SetActive(isDone);
+        return isDone;
+    }
+
+    public void ShowFailFull() {
+        
+    }
+
+    public void ShowFailOtherColor() {
+       
     }
 }

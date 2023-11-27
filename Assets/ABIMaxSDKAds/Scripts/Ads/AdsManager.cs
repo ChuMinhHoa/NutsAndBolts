@@ -129,8 +129,9 @@ namespace SDK {
             if(!GetSelectedMediation(AdsType.BANNER).IsInited) {
                 GetSelectedMediation(AdsType.BANNER).Init();
             }
-            if(!GetSelectedMediation(AdsType.MREC).IsInited) {
-                GetSelectedMediation(AdsType.MREC).Init();
+            if (GetSelectedMediation(AdsType.MREC) != null)
+                if(!GetSelectedMediation(AdsType.MREC).IsInited) {
+                    GetSelectedMediation(AdsType.MREC).Init();
             }
             if (GetSelectedMediation(AdsType.APP_OPEN) != null)
                 if(!GetSelectedMediation(AdsType.APP_OPEN).IsInited) {

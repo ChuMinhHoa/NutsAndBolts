@@ -23,7 +23,7 @@ MonoBehaviour:
     bannerAdUnitID:
       AndroidID: 089d9c2c6ffe5149
     mrecAdUnitID:
-      AndroidID: e79c7c6f7270943d
+      AndroidID: 
     appOpenAdUnitID:
       AndroidID: 7fedca3448ffd1f5
   admobAdsSetup:
@@ -46,5 +46,5 @@ MonoBehaviour:
   interstitialAdsMediationType: 1
   rewardedAdsMediationType: 1
   bannerAdsMediationType: 1
-  mrecAdsMediationType: 1
+  mrecAdsMediationType: 0
   appOpenAdsMediationType: 0

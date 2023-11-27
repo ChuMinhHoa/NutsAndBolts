@@ -17,6 +17,8 @@ public class DataConfig
     {
         return levelDataConfig.GetLevelEasy();
     }
+
+    public LevelData GetLevel1Data() { return levelDataConfig.GetLevel1Data(); }
     #endregion
 
     #region MaterialDataConfig

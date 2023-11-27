@@ -16,19 +16,19 @@ MonoBehaviour:
   levelDatas:
   - Level: 1
     TotalLine: 2
-    TotalBulong: 3
+    TotalBulong: 4
     CountMaxInLine: 3
     BulongFree: 1
     TotalOcVit: 2
   - Level: 2
     TotalLine: 2
-    TotalBulong: 3
+    TotalBulong: 4
     CountMaxInLine: 3
     BulongFree: 1
     TotalOcVit: 2
   - Level: 3
     TotalLine: 2
-    TotalBulong: 3
+    TotalBulong: 5
     CountMaxInLine: 3
     BulongFree: 1
     TotalOcVit: 2
@@ -608,10 +608,72 @@ MonoBehaviour:
     CountMaxInLine: 4
     BulongFree: 3
     TotalOcVit: 4
-  levelDataEasy:
-    Level: 1
+  levelDataEasys:
+  - Level: 0
+    TotalLine: 2
+    TotalBulong: 5
+    CountMaxInLine: 3
+    BulongFree: 1
+    TotalOcVit: 2
+  - Level: 1
+    TotalLine: 2
+    TotalBulong: 5
+    CountMaxInLine: 3
+    BulongFree: 1
+    TotalOcVit: 2
+  - Level: 2
+    TotalLine: 3
+    TotalBulong: 8
+    CountMaxInLine: 3
+    BulongFree: 2
+    TotalOcVit: 2
+  - Level: 3
+    TotalLine: 3
+    TotalBulong: 8
+    CountMaxInLine: 3
+    BulongFree: 2
+    TotalOcVit: 2
+  - Level: 4
+    TotalLine: 2
+    TotalBulong: 5
+    CountMaxInLine: 3
+    BulongFree: 1
+    TotalOcVit: 2
+  - Level: 5
+    TotalLine: 2
+    TotalBulong: 5
+    CountMaxInLine: 3
+    BulongFree: 1
+    TotalOcVit: 2
+  - Level: 6
+    TotalLine: 2
+    TotalBulong: 5
+    CountMaxInLine: 3
+    BulongFree: 1
+    TotalOcVit: 2
+  - Level: 7
+    TotalLine: 3
+    TotalBulong: 8
+    CountMaxInLine: 3
+    BulongFree: 2
+    TotalOcVit: 2
+  - Level: 8
+    TotalLine: 2
+    TotalBulong: 5
+    CountMaxInLine: 3
+    BulongFree: 1
+    TotalOcVit: 2
+  - Level: 9
+    TotalLine: 3
+    TotalBulong: 8
+    CountMaxInLine: 3
+    BulongFree: 2
+    TotalOcVit: 2
+  level1Data:
+    Level: 0
     TotalLine: 2
     TotalBulong: 3
     CountMaxInLine: 3
     BulongFree: 1
     TotalOcVit: 2
+  totalLevelEasy: 10

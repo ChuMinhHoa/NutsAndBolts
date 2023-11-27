@@ -13,7 +13,8 @@ public enum EventName
 {
     ChangeLevel,
     ChangeState,
-    CheckAbleOfButtonUndo
+    CheckAbleOfButtonUndo,
+    ChangeSoundStatus
 }
 
 public class EventManager : Singleton<EventManager>

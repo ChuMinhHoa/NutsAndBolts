@@ -144,6 +144,7 @@ public class UIManager : MonoBehaviour {
     }
 
     public void ShowPanelWinGame(UnityAction actionDone) {
+        GameManager.Instance.audioManager.PlaySound(SoundId.DoneLevel);
         isHasPopupOnScene = true;
         GameObject go = GetPanel(UIPanelType.PanelWinGame);
         go.SetActive(true);

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UIAnimation;
 
 public class PanelSetting : UIPanel
 {
@@ -10,6 +11,9 @@ public class PanelSetting : UIPanel
     [SerializeField] Button btnVibration;
     [SerializeField] List<Sprite> sprButton;
 
+    [SerializeField] ButtonSwitch btnSoundSwitch;
+    [SerializeField] ButtonSwitch btnVibrationSwitch;
+
     bool onSound;
     bool onVibration;
     public override void Awake()
@@ -17,29 +21,41 @@ public class PanelSetting : UIPanel
         panelType = UIPanelType.PanelSetting;
         base.Awake();
 
-        // onSound = ProfileManager.Instace.playerData.playerResource.GetSoundStatus
-        // onVibration = ProfileManager.Instace.playerData.playerResource.GetVibrationStatus
+        onSound = ProfileManager.Instance.playerData.playerResource.GetOnSound();
+        onVibration = ProfileManager.Instance.playerData.playerResource.GetOnVibration();
+
         btnSound.image.sprite = onSound ? sprButton[0] : sprButton[1];
-        btnSound.image.sprite = onSound ? sprButton[0] : sprButton[1];
+        btnVibration.image.sprite = onVibration ? sprButton[0] : sprButton[1];
 
         btnSound.onClick.AddListener(ChangeSoundStatus);
         btnVibration.onClick.AddListener(ChangeVibrationStatus);
         btnClose.onClick.AddListener(OnClosePanel);
+
+        btnSoundSwitch.SetIsOn(onSound);
+        btnVibrationSwitch.SetIsOn(onVibration);
     }
 
     void ChangeSoundStatus() {
+        GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
         onSound = !onSound;
         btnSound.image.sprite = onSound ? sprButton[0] : sprButton[1];
-        //ProfileManager.Instace.playerData.playerResource.ChangeSoundStatus(onSound)
+        btnSoundSwitch.OnChangePoint();
+        ProfileManager.Instance.playerData.playerResource.ChangeSoundStatus(onSound);
     }
 
     void ChangeVibrationStatus() {
+        GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
         onVibration = !onVibration;
-        btnSound.image.sprite = onSound ? sprButton[0] : sprButton[1];
-        //ProfileManager.Instace.playerData.playerResource.ChangeVibrationStatus(onVibration)
+        btnVibration.image.sprite = onVibration ? sprButton[0] : sprButton[1];
+        btnVibrationSwitch.OnChangePoint();
+        ProfileManager.Instance.playerData.playerResource.ChangeVibrationStatus(onVibration);
     }
 
     void OnClosePanel() {
-        UIManager.instance.ClosepPanelSetting();
+        UIAnimationController.BtnAnimZoomBasic(btnClose.transform, .25f, () =>
+        {
+            GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
+            UIManager.instance.ClosepPanelSetting();
+        });
     }
 }

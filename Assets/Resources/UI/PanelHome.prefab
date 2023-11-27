@@ -216,6 +216,7 @@ MonoBehaviour:
   topRectBase: {fileID: 3452921708158796549}
   btnPlay: {fileID: 3452921708651761140}
   btnSetting: {fileID: 3452921708400838137}
+  txtCurrentLevel: {fileID: 3452921707876442023}
 --- !u!1 &3452921707382203611
 GameObject:
   m_ObjectHideFlags: 0

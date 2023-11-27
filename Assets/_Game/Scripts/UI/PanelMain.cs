@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using SDK;
-
+using UIAnimation;
+using DG.Tweening;
 public class PanelMain : UIPanel
 {
     [Header("BUTTON")]
@@ -21,6 +22,8 @@ public class PanelMain : UIPanel
     [SerializeField] GameObject objADSUndo;
     [SerializeField] GameObject objADSBulong;
 
+    int replayCount;
+
     public override void Awake()
     {
         panelType = UIPanelType.PanelMain;
@@ -30,6 +33,7 @@ public class PanelMain : UIPanel
         btnUndo.onClick.AddListener(Undo);
         btnAddBulong.onClick.AddListener(AddBulong);
         ChangeTextLevel();
+        ChangeTextState();
         EventManager.AddListener(EventName.ChangeLevel.ToString(), ChangeTextLevel);
         EventManager.AddListener(EventName.ChangeState.ToString(), ChangeTextState);
         EventManager.AddListener(EventName.CheckAbleOfButtonUndo.ToString(), CheckAbleUndo);
@@ -47,55 +51,76 @@ public class PanelMain : UIPanel
 
     void CheckAbleUndo()
     {
-        btnUndo.interactable = true;
+        DOVirtual.DelayedCall(1f, () => {
+            btnUndo.interactable = GameManager.Instance.gamePlayController.CheckCanUndo();
+            objADSUndo.SetActive(GameManager.Instance.gamePlayController.CheckShowObjUndo());
+        });
     }
 
     void Replay()
     {
-        GameManager.Instance.gamePlayController.ReplayLevel();
+        GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
+        UIAnimationController.BtnAnimZoomBasic(btnRePlay.transform, 0.25f, () =>
+        {
+           
+            if (replayCount > 3)
+            {
+                AdsManager.Instance.ShowInterstitial(null, null);
+                replayCount = 0;
+            }
+            else replayCount++;
+            GameManager.Instance.gamePlayController.ReplayLevel();
+        });
     }
 
-    void Undo() {
-        if (!GameManager.Instance.gamePlayController.CheckCanUndo())
-            return;
+    void Undo()
+    {
+        GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
         btnUndo.interactable = false;
-        if (objADSUndo.activeSelf)
+        UIAnimationController.BtnAnimZoomBasic(btnUndo.transform, 0.25f, () =>
         {
-            if (ProfileManager.Instance.playerData.playerResource.IsCheatADS())
+            if (!GameManager.Instance.gamePlayController.CheckCanUndo())
+                return;
+            if (objADSUndo.activeSelf)
             {
-                OnUndoADSSuccess();
+                if (ProfileManager.Instance.playerData.playerResource.IsCheatADS())
+                {
+                    OnUndoADSSuccess();
+                }
+                else
+                    AdsManager.Instance.ShowRewardVideo(WatchVideoRewardType.Undo.ToString(), OnUndoADSSuccess, OnUndoADSFail);
             }
             else
-                AdsManager.Instance.ShowRewardVideo(WatchVideoRewardType.Undo.ToString(), OnUndoADSSuccess, OnUndoADSFail);
-        }else
-            GameManager.Instance.gamePlayController.Undo(ActionCallBackUndo, false);
+                GameManager.Instance.gamePlayController.Undo(false);
+        });
     }
 
     void OnUndoADSSuccess() {
-        GameManager.Instance.gamePlayController.Undo(ActionCallBackUndo, true);
+        GameManager.Instance.gamePlayController.Undo(true);
     }
 
     void OnUndoADSFail() {
-        Debug.Log("false");
-        btnUndo.interactable = true;
-        ActionCallBackUndo();
-    }
-
-    void ActionCallBackUndo() {
-        objADSUndo.SetActive(GameManager.Instance.gamePlayController.CheckShowObjUndo());
+        CheckAbleUndo();
     }
 
     void AddBulong() {
-        if (!GameManager.Instance.gamePlayController.CheckCanAddBulong())
-            return;
-        if (ProfileManager.Instance.playerData.playerResource.IsCheatADS())
+        btnAddBulong.interactable = false;
+        GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
+        if (GameManager.Instance.gamePlayController.onUndo) return;
+        UIAnimationController.BtnAnimZoomBasic(btnAddBulong.transform, 0.25f, () =>
         {
-            WatchAdsAddBulongDone();
-        }
-        else
-        {
-            AdsManager.Instance.ShowRewardVideo(WatchVideoRewardType.AddBulong.ToString(), WatchAdsAddBulongDone);
-        }
+            if (!GameManager.Instance.gamePlayController.CheckCanAddBulong() )
+                return;
+            if (ProfileManager.Instance.playerData.playerResource.IsCheatADS())
+            {
+                WatchAdsAddBulongDone();
+            }
+            else
+            {
+                AdsManager.Instance.ShowRewardVideo(WatchVideoRewardType.AddBulong.ToString(), WatchAdsAddBulongDone);
+            }
+            btnAddBulong.interactable = true;
+        });
     }
 
     public void WatchAdsAddBulongDone() {
@@ -104,7 +129,12 @@ public class PanelMain : UIPanel
     }
 
     void Home() {
-        UIManager.instance.ClosePanelMain();
-        UIManager.instance.ShowPanelHome();
+        UIAnimationController.BtnAnimZoomBasic(btnHome.transform, 0.25f, () =>
+        {
+            GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
+            UIManager.instance.ClosePanelMain();
+            UIManager.instance.ShowPanelHome();
+        });
+        
     }
 }

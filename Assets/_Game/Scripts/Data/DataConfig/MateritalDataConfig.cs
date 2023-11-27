@@ -29,4 +29,5 @@ public class MateritalDataConfig : ScriptableObject
 public class MaterialData {
     public int colorID;
     public Material material;
+    public Color colorOutline;
 }

@@ -63,5 +63,12 @@ public enum VersionStatus
 public enum SoundId
 {
     None,
-    SFX_Base
+    SFX_Base,
+    BGSound,
+    UIClick,
+    ChooseBulong,
+    OcVitMoveDone,
+    DoneBulong,
+    DoneLevel,
+    Faild
 }

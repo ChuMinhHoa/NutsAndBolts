@@ -56,7 +56,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 542075034774278890}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0.38268343, z: 0, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -68,7 +68,7 @@ Transform:
   - {fileID: 6048220036312045053}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 45, z: 0}
 --- !u!114 &542075034774278888
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85,6 +85,7 @@ MonoBehaviour:
   countTotalOcVit: 0
   countScaleUp: 0
   isNull: 0
+  levelIsSecret: 0
   myCollider: {fileID: 4597214113204322119}
   objs: []
   objScaleUp: {fileID: 2921443420210763948}
@@ -100,6 +101,7 @@ MonoBehaviour:
   pointOut: {fileID: 7322927424648352962}
   pointIn: {fileID: 7157218588794507542}
   isDone: 0
+  addDone: 0
   myEffect: {fileID: 6048220036312044995}
 --- !u!65 &4597214113204322119
 BoxCollider:
@@ -5017,7 +5019,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -5832483602900123427, guid: 2681169fb99104341a4a5001e6261239, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.7
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -5832483602900123427, guid: 2681169fb99104341a4a5001e6261239, type: 3}
       propertyPath: m_LocalScale.y
@@ -5025,7 +5027,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -5832483602900123427, guid: 2681169fb99104341a4a5001e6261239, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.7
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -5832483602900123427, guid: 2681169fb99104341a4a5001e6261239, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5059,6 +5061,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5325404870481453298, guid: 2681169fb99104341a4a5001e6261239, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: fa30644ef50c1544bb904c660a090e8c, type: 2}
+    - target: {fileID: 6289776048922875581, guid: 2681169fb99104341a4a5001e6261239, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: fa30644ef50c1544bb904c660a090e8c, type: 2}
     - target: {fileID: 6471496338278676438, guid: 2681169fb99104341a4a5001e6261239, type: 3}
       propertyPath: m_IsActive
       value: 0
