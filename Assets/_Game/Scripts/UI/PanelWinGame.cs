@@ -9,6 +9,11 @@ public class PanelWinGame : UIPanel
 {
     [SerializeField] Button btnNextLeve;
     [SerializeField] Transform amazingRect;
+    [SerializeField] Transform popupRect;
+    [SerializeField] Transform levelWrap;
+    [SerializeField] TextMeshProUGUI txtPerfect;
+    [SerializeField] TextMeshProUGUI txtLevel;
+    [SerializeField] List<Transform> trsStars;
     UnityAction actionCallBack;
     public override void Awake()
     {
@@ -19,20 +24,41 @@ public class PanelWinGame : UIPanel
 
     private void OnEnable()
     {
-        UIAnimationController.PanelPopUpBasic(amazingRect, 0.5f, false);
-        UIAnimationController.PopupBigZoom(btnNextLeve.transform, 0.25f, false, () => {
-            UIAnimationController.PopupBigZoomLoop(btnNextLeve.transform, 2f);
+        txtLevel.text = "LEVEL " + (ProfileManager.Instance.playerData.playerResource.playerLevel+1).ToString();
+        UIAnimationController.PanelPopUpBasic(popupRect, .25f, false, () =>
+        {
+            InvokeRepeating("StartStarEffect", 0f, 3f);
         });
+    }
+    private void StartStarEffect()
+    {
+        UIAnimationController.PanelPopUpBasic(amazingRect, .25f, () => {
+            indexStar = 0;
+            StartCoroutine(StarEffect());
+            UIAnimationController.PanelPopUpBasic(levelWrap, .25f, () => {
+                UIAnimationController.PanelPopUpBasic(btnNextLeve.transform, .25f);
+            });
+        });
+    }
+    int indexStar;
+    IEnumerator StarEffect() {
+        while (indexStar < trsStars.Count)
+        {
+            UIAnimationController.BtnAnimZoomBasic(trsStars[indexStar], .25f);
+            indexStar++;
+            yield return new WaitForSeconds(.1f);
+        }
     }
 
     public void SetActionCallBack(UnityAction actionCallBack) { this.actionCallBack = actionCallBack; }
 
     void NextLevel() {
+        CancelInvoke("StartStarEffect");
+        StopCoroutine(StarEffect());
         UIAnimationController.BtnAnimZoomBasic(btnNextLeve.transform, 0.25f, () => {
             GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
-            if (actionCallBack != null)
-                actionCallBack();
             UIManager.instance.ClosePanelWinGame();
+            UIManager.instance.ShowPanelLoading(actionCallBack);
         });
     }
 }

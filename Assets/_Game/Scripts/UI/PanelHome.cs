@@ -25,10 +25,14 @@ public class PanelHome : UIPanel
     void PlayGame() {
         UIAnimationController.BtnAnimZoomBasic(btnPlay.transform, .25f, ()=> {
             GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
-            UIManager.instance.ClosePanelHome();
-            UIManager.instance.ShowPanelMain();
+            UIManager.instance.ShowPanelLoading(()=> {
+                UIManager.instance.ShowPanelMain();
+                UIManager.instance.ClosePanelHome();
+            });
         });
     }
+
+
 
     void ShowPanelSetting() {
         UIAnimationController.BtnAnimZoomBasic(btnSetting.transform, .25f);

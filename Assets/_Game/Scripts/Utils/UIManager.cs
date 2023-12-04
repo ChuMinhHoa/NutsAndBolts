@@ -132,12 +132,16 @@ public class UIManager : MonoBehaviour {
         go.SetActive(false);
     }
 
-    public void ShowPanelLoadScene() {
+    public void ShowPanelLoading(UnityAction actionCallback) {
         isHasPopupOnScene = true;
         GameObject go = GetPanel(UIPanelType.PanelLoading);
+        PanelLoading panelLoading = go.GetComponent<PanelLoading>();
+        panelLoading.SetActionCallBack(actionCallback);
+        panelLoading.LoadIn();
         go.SetActive(true);
     }
-    public void ClosePanelLoadScene() {
+
+    public void ClosePanelLoading() {
         isHasPopupOnScene = false;
         GameObject go = GetPanel(UIPanelType.PanelLoading);
         go.SetActive(false);

@@ -17,10 +17,12 @@ public class PanelMain : UIPanel
     [Header("TEXT")]
     [SerializeField] TextMeshProUGUI txtCurrentLevel;
     [SerializeField] TextMeshProUGUI txtState;
+    [SerializeField] Text txtCountUndo;
 
     [Header("Object")]
     [SerializeField] GameObject objADSUndo;
     [SerializeField] GameObject objADSBulong;
+    [SerializeField] GameObject objCountUndo;
 
     int replayCount;
 
@@ -42,11 +44,17 @@ public class PanelMain : UIPanel
     void ChangeTextLevel() {
         txtCurrentLevel.text = "LEVEL " + (ProfileManager.Instance.playerData.playerResource.GetLevel() + 1).ToString();
         btnAddBulong.interactable = true;
+        objADSUndo.SetActive(false);
+        objCountUndo.SetActive(true);
+        txtCountUndo.text = "5";
     }
 
     void ChangeTextState() {
-        txtState.text = "STATE " + ProfileManager.Instance.playerData.playerResource.GetState().ToString();
+        txtState.text = "STATE " + (ProfileManager.Instance.playerData.playerResource.GetState()+1).ToString();
         btnAddBulong.interactable = true;
+        txtCountUndo.text = "5";
+        objADSUndo.SetActive(false);
+        objCountUndo.SetActive(true);
     }
 
     void CheckAbleUndo()
@@ -54,6 +62,7 @@ public class PanelMain : UIPanel
         DOVirtual.DelayedCall(1f, () => {
             btnUndo.interactable = GameManager.Instance.gamePlayController.CheckCanUndo();
             objADSUndo.SetActive(GameManager.Instance.gamePlayController.CheckShowObjUndo());
+            objCountUndo.SetActive(!objADSUndo.activeSelf);
         });
     }
 
@@ -62,13 +71,7 @@ public class PanelMain : UIPanel
         GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
         UIAnimationController.BtnAnimZoomBasic(btnRePlay.transform, 0.25f, () =>
         {
-           
-            if (replayCount > 3)
-            {
-                AdsManager.Instance.ShowInterstitial(null, null);
-                replayCount = 0;
-            }
-            else replayCount++;
+            AdsManager.Instance.ShowInterstitial(null, null);
             GameManager.Instance.gamePlayController.ReplayLevel();
         });
     }
@@ -92,6 +95,7 @@ public class PanelMain : UIPanel
             }
             else
                 GameManager.Instance.gamePlayController.Undo(false);
+            txtCountUndo.text = GameManager.Instance.gamePlayController.GetCountUndo().ToString();
         });
     }
 

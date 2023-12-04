@@ -9,8 +9,6 @@ public class GamePlayController : MonoBehaviour
 {
     [SerializeField] Camera mainCamera;
     [Header("VECTOR 3")]
-    [SerializeField] Vector3 pointCamera2;
-    [SerializeField] Vector3 pointCamera3;
 
     [SerializeField] Vector3 vectorSpace;
     [SerializeField] Vector3 vectorScale;
@@ -33,6 +31,7 @@ public class GamePlayController : MonoBehaviour
     int countTemp;
     int countRemain;
     int indexLine;
+    int currentCountBulongMaxInline;
     [SerializeField] int countUndoRemain;
 
     [Header("FLOAT")]
@@ -48,7 +47,6 @@ public class GamePlayController : MonoBehaviour
     LevelData levelData;
     OcVit currentOcvit;
     BuLong currentBulong;
-    OcVit ocVitCheck;
     OcVit ocVitBehind;
 
     [SerializeField] List<BuLong> buLongs;
@@ -92,21 +90,31 @@ public class GamePlayController : MonoBehaviour
         this.ocVitCount = ocVitCount;
         this.bulongFreeCount = bulongFreeCount;
         totalColor = totalCount - bulongFreeCount;
-
-        if (totalLine >= 3)
+        bulongOnActive = totalCount;
+        ChangeCamera();
+        ResetBulongOcVit();
+        InitColor();
+        InitBulong();
+    }
+    void ChangeCamera() {
+        GetCurrentMaxLine();
+        if (currentCountBulongMaxInline > 3)
         {
             DOVirtual.Float(mainCamera.orthographicSize, 25, .25f, (value) => { mainCamera.orthographicSize = value; });
-            mainCamera.transform.DOMove(pointCamera3, .25f);
         }
         else
         {
             DOVirtual.Float(mainCamera.orthographicSize, 20, .25f, (value) => { mainCamera.orthographicSize = value; });
-            mainCamera.transform.DOMove(pointCamera2, .25f);
         }
-
-        ResetBulongOcVit();
-        InitColor();
-        InitBulong();
+    }
+    void GetCurrentMaxLine() {
+        currentCountBulongMaxInline = 0;
+        for (int i = 0; i < totalLine; i++)
+        {
+            int countI = buLongs.FindAll(e => e.gameObject.activeSelf && e.GetLineIndex() == i).Count;
+            if (countI > currentCountBulongMaxInline)
+                currentCountBulongMaxInline = countI;
+        }
     }
     #region Bu Long
     void ResetBulongOcVit() {
@@ -117,7 +125,6 @@ public class GamePlayController : MonoBehaviour
         }
     }
     public void InitBulong() {
-        bulongOnActive = totalCount;
         countRemain = totalCount;
         countTemp = 3;
         countInLine.Clear();
@@ -208,6 +215,7 @@ public class GamePlayController : MonoBehaviour
             if (i % 2 != 0)
                 lineOddTemp--;
         }
+        ChangeCamera();
     }
 
     void DeactiveBulongInLine(int lineIndex) {
@@ -281,12 +289,13 @@ public class GamePlayController : MonoBehaviour
         currentBulong = bulong;
         currentOcvit = ocVit;
         onChoosed = true;
-        detectSelect = true;
+        //detectSelect = true;
         ocVitOnMove.Clear();
         ocVitOnMove.Add(ocVit);
         ocVitsTemp.Clear();
+        GetOcVitSameColor();
         currentOcvit.ChooseOut(bulong.GetPointInOut().position, speedOut, ()=> {
-            GetOcVitSameColor();
+            
             if (actionDone != null) actionDone();
         });
        
@@ -302,7 +311,8 @@ public class GamePlayController : MonoBehaviour
         if (ocVitTemp.IsSameColor(currentOcvit.GetColor()) && !ocVitTemp.IsOnSecretMode())
         {
             ocVitOnMove.Add(ocVitTemp);
-            ocVitTemp.ChooseOut(currentBulong.GetPointInOut().position - vectorScaleOcvit * (ocVitOnMove.Count - 1), speedOut, GetOcVitSameColor);
+            ocVitTemp.ChooseOut(currentBulong.GetPointInOut().position - vectorScaleOcvit * (ocVitOnMove.Count - 1), speedOut);
+            GetOcVitSameColor();
         }
         else {
             detectSelect = false;
@@ -310,13 +320,17 @@ public class GamePlayController : MonoBehaviour
     }
 
     BuLong bulongOnChoose;
-    public void OnChooseOtherBulong(BuLong bulong, bool isSame) {
+    public void OnChooseOtherBulong(BuLong bulong) {
         if (currentBulong == bulong)
+        {
+            GameManager.Instance.audioManager.PlaySound(SoundId.Faild);
             NextStepMoveBack();
+        }
         else
         {
             if (!bulong.IsCanJoin(ocVitOnMove[0]))
             {
+                GameManager.Instance.audioManager.PlaySound(SoundId.Faild);
                 bulong.ShowFailOtherColor();
                 NextStepMoveBack();
                 return;
@@ -324,6 +338,7 @@ public class GamePlayController : MonoBehaviour
 
             if (bulong.IsFull())
             {
+                GameManager.Instance.audioManager.PlaySound(SoundId.Faild);
                 bulong.ShowFailFull();
                 NextStepMoveBack();
                 return;
@@ -363,11 +378,9 @@ public class GamePlayController : MonoBehaviour
         detectSelect = true;
         if (ocVitOnMove.Count > 0)
         {
-            currentBulong.ChooseSameBulong(ocVitOnMove[ocVitOnMove.Count - 1], speedIn, () =>
-            {
-                ocVitOnMove.Remove(ocVitOnMove[ocVitOnMove.Count - 1]);
-                NextStepMoveBack();
-            });
+            currentBulong.ChooseSameBulong(ocVitOnMove[ocVitOnMove.Count - 1], speedIn, null);
+            ocVitOnMove.Remove(ocVitOnMove[ocVitOnMove.Count - 1]);
+            NextStepMoveBack();
         }
         else SetDefault();
     }
@@ -390,7 +403,6 @@ public class GamePlayController : MonoBehaviour
     void SetDefault() {
         onChoosed = false;
         bulongOnChoose = null;
-        ocVitCheck = null;
         currentBulong = null;
         currentOcvit = null;
         detectSelect = false;
@@ -445,27 +457,35 @@ public class GamePlayController : MonoBehaviour
     public void OnDoneBulong() {
         GameManager.Instance.audioManager.PlaySound(SoundId.DoneBulong);
         currentBulongDoneCount++;
-        if (currentBulongDoneCount == totalColor)
-        {
-            currentBulongDoneCount = 0;
-            stepMoveOcVits.Clear();
-            countUndoRemain = 5;
-            SetDefault();
-            if (state == 1)
+        DOVirtual.DelayedCall(.5f, () => {
+            if (currentBulongDoneCount == totalColor)
             {
-                levelSecret = false;
-                ProfileManager.Instance.playerData.playerResource.LevelUp(currentLevel + 1);
-                UIManager.instance.ShowPanelWinGame(ChangeLevel);
+                currentBulongDoneCount = 0;
+                stepMoveOcVits.Clear();
+                countUndoRemain = 5;
+                SetDefault();
+                if (state == 1)
+                {
+                    levelSecret = false;
+                    ProfileManager.Instance.playerData.playerResource.LevelUp(currentLevel + 1);
+                    UIManager.instance.ShowPanelWinGame(ChangeLevel);
+                }
+                else
+                {
+                    GameManager.Instance.audioManager.PlaySound(SoundId.DoneLevel);
+                    UIManager.instance.ShowPanelLoading(ChangeState);
+                }
             }
-            else
-            {
-                ProfileManager.Instance.playerData.playerResource.ChangeState(1);
-                state = 1;
-                levelData = ProfileManager.Instance.dataConfig.GetLevelData(currentLevel);
-                levelSecret = ((currentLevel+1) > 6 && (currentLevel +1) % 3 == 0);
-                SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
-            }
-        }
+        });
+        
+    }
+
+    void ChangeState() {
+        ProfileManager.Instance.playerData.playerResource.ChangeState(1);
+        state = 1;
+        levelData = ProfileManager.Instance.dataConfig.GetLevelData(currentLevel);
+        levelSecret = ((currentLevel + 1) > 6 && (currentLevel + 1) % 3 == 0);
+        SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
     }
 
     void ChangeLevel() {
@@ -504,6 +524,7 @@ public class GamePlayController : MonoBehaviour
         stepMoveOcVits.Clear();
     }
     public bool CheckCanUndo() { return stepMoveOcVits.Count > 0; }
+    public int GetCountUndo() { return countUndoRemain; }
     public bool CheckShowObjUndo() { return countUndoRemain == 0; }
     public bool CheckCanAddBulong() { return totalLine * countMaxInLine > bulongOnActive; }
 
@@ -518,13 +539,27 @@ public class GamePlayController : MonoBehaviour
         onUndo = true;
         if (currentOcvit != null)
         {
-            NextStepMoveBack();
-            StartMoveBack();
-
+            NextStepMoveBack(StartMoveBack);
         }
         else
             StartMoveBack();
         if (!isADS) countUndoRemain--;
+    }
+    // call on Undo
+    void NextStepMoveBack(UnityAction actionCallBack)
+    {
+        detectSelect = true;
+        if (ocVitOnMove.Count > 0)
+        {
+            currentBulong.ChooseSameBulong(ocVitOnMove[ocVitOnMove.Count - 1], speedIn, null);
+            ocVitOnMove.Remove(ocVitOnMove[ocVitOnMove.Count - 1]);
+            NextStepMoveBack(actionCallBack);
+        }
+        else {
+            SetDefault();
+            actionCallBack();
+        }
+        
     }
 
     void StartMoveBack() {
@@ -536,7 +571,11 @@ public class GamePlayController : MonoBehaviour
         OcVitUndoOut(ocVit, currentBulong, ()=> {
             currentBulong.RemoveOcvit(ocVit);
             ChooseOtherBulongOnMoveBack(ocVit, lastBulong);
-            if (currentBulong.OnDoneMode()) currentBulongDoneCount--;
+            if (currentBulong.OnDoneMode())
+            {
+                currentBulong.addDone = false;
+                currentBulongDoneCount--;
+            }
             ocVitOnMove.Remove(ocVitOnMove[ocVitOnMove.Count - 1]);
             if (ocVitOnMove.Count > 0)
                 OnMoveBack(ocVitOnMove[ocVitOnMove.Count - 1], stepMoveOcVits[stepMoveOcVits.Count - 1].currentBulong, stepMoveOcVits[stepMoveOcVits.Count - 1].lastBulong);
@@ -550,7 +589,7 @@ public class GamePlayController : MonoBehaviour
     {
         GameManager.Instance.audioManager.PlaySound(SoundId.ChooseBulong);
         onChoosed = true;
-        detectSelect = true;
+        //detectSelect = true;
         ocVit.ChooseOut(bulong.GetPointInOut().position, speedOut, () => {
             if (actionDone != null) actionDone();
         });

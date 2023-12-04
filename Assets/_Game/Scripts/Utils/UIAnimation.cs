@@ -42,6 +42,19 @@ namespace UIAnimation {
                     actioncallBack();
             });
         }
+        public static void PanelPopUpBasic(Transform trsDoAnim, float duration, UnityAction actioncallBack = null)
+        {
+            trsDoAnim.localScale = vectorDefault;
+            Sequence mainSquence = DOTween.Sequence();
+            mainSquence.Append(trsDoAnim.DOScale(vectorScaleTo11, duration / 2));
+            mainSquence.Append(trsDoAnim.DOScale(vectorDefault, duration / 2));
+            mainSquence.Play();
+            mainSquence.OnComplete(() =>
+            {
+                if (actioncallBack != null)
+                    actioncallBack();
+            });
+        }
 
         public static void PanelPopUpBasic(Transform trsDoAnim, float duration,bool loop, UnityAction actioncallBack = null) {
             trsDoAnim.localScale = vectorScaleTo08;

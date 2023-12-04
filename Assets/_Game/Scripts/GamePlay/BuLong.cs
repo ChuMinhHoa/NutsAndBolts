@@ -39,7 +39,7 @@ public class BuLong : MonoBehaviour
     [SerializeField] Transform pointOut; //1.6f+2.8f*i+vectorSpaceOcVit.y*2;
     [SerializeField] Transform pointIn;
     [SerializeField] bool isDone;
-    [SerializeField] bool addDone;
+    public bool addDone;
     [SerializeField] ParticleSystem myEffect;
 
 
@@ -193,7 +193,7 @@ public class BuLong : MonoBehaviour
         }
         else
         {
-            GameManager.Instance.gamePlayController.OnChooseOtherBulong(this, false);
+            GameManager.Instance.gamePlayController.OnChooseOtherBulong(this);
         }
     }
 

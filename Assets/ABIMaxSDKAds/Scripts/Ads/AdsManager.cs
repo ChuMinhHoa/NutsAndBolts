@@ -368,6 +368,7 @@ namespace SDK {
         private void OnBannerLoadedSucess() {
             Debug.Log("Banner Loaded");            
             m_BannerCountTime = 0;
+            ShowBannerAds();
         }
 
         private void OnBannerLoadedFail()
