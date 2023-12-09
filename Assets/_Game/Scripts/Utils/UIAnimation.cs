@@ -13,6 +13,7 @@ namespace UIAnimation {
         static Vector3 vectorScaleTo08 = new Vector3(.8f, .8f, .8f);
         static Vector3 vectorScaleTo11 = new Vector3(1.1f, 1.1f, 1.1f);
         static Vector3 vectorScaleTo12 = new Vector3(1.2f, 1.2f, 1.2f);
+        static Vector3 vectorScaleTo15 = new Vector3(1.5f, 1.5f, 1.5f);
 
         public static void BtnAnimType1(Transform trsDoAnim, float duration, UnityAction actioncallBack = null) {
             Sequence mainSquence = DOTween.Sequence();
@@ -42,6 +43,23 @@ namespace UIAnimation {
                     actioncallBack();
             });
         }
+        public static Sequence BtnAnimZoomBasic(Transform trsDoAnim, float duration, int loop, UnityAction actioncallBack = null)
+        {
+            Sequence mainSquence = DOTween.Sequence();
+            mainSquence.Append(trsDoAnim.DOScale(vectorScaleTo15, duration));
+            mainSquence.Append(trsDoAnim.DOScale(vectorScaleTo12, duration));
+            mainSquence.Append(trsDoAnim.DOScale(vectorScaleTo15, duration));
+            mainSquence.Append(trsDoAnim.DOScale(vectorScaleTo12, duration));
+            mainSquence.SetLoops(loop);
+            mainSquence.Play();
+            mainSquence.OnComplete(() =>
+            {
+                if (actioncallBack != null)
+                    actioncallBack();
+            });
+            return mainSquence;
+        }
+
         public static void PanelPopUpBasic(Transform trsDoAnim, float duration, UnityAction actioncallBack = null)
         {
             trsDoAnim.localScale = vectorDefault;

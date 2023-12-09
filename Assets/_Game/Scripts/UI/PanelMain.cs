@@ -46,13 +46,13 @@ public class PanelMain : UIPanel
         btnAddBulong.interactable = true;
         objADSUndo.SetActive(false);
         objCountUndo.SetActive(true);
-        txtCountUndo.text = "5";
+        txtCountUndo.text = "1";
     }
 
     void ChangeTextState() {
         txtState.text = "STATE " + (ProfileManager.Instance.playerData.playerResource.GetState()+1).ToString();
         btnAddBulong.interactable = true;
-        txtCountUndo.text = "5";
+        txtCountUndo.text = "1";
         objADSUndo.SetActive(false);
         objCountUndo.SetActive(true);
     }

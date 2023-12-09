@@ -62,7 +62,7 @@ public class GamePlayController : MonoBehaviour
     {
         currentLevel = ProfileManager.Instance.playerData.playerResource.GetLevel();
         state = ProfileManager.Instance.playerData.playerResource.GetState();
-        countUndoRemain = 5;
+        countUndoRemain = 1;
         if (state == 1)
         {
             levelData = ProfileManager.Instance.dataConfig.GetLevelData(currentLevel);
@@ -462,7 +462,7 @@ public class GamePlayController : MonoBehaviour
             {
                 currentBulongDoneCount = 0;
                 stepMoveOcVits.Clear();
-                countUndoRemain = 5;
+                countUndoRemain = 1;
                 SetDefault();
                 if (state == 1)
                 {
@@ -544,6 +544,7 @@ public class GamePlayController : MonoBehaviour
         else
             StartMoveBack();
         if (!isADS) countUndoRemain--;
+        else countUndoRemain += 2;
     }
     // call on Undo
     void NextStepMoveBack(UnityAction actionCallBack)
