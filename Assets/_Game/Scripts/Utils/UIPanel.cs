@@ -9,7 +9,8 @@ public enum UIPanelType {
     PanelMain,
     PanelLoading,
     PanelWinGame,
-    PanelLoseGame
+    PanelLoseGame,
+    PanelLevelRace
 }
 public class UIPanel : MonoBehaviour {
     public bool isRegisterInUI = true;

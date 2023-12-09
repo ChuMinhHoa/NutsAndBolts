@@ -38,6 +38,7 @@ public class ConstantValue
     public static float BONE_CONSTRUCT_TIME = 240;
     public static int FREE_UPGRADE_SKELETON_ADS = 3;
     public static float FREE_UPGRADE_SKELETON_ADS_COOLDOWN = 3f * 60f;
+    public static float LEVEL_RACE_GOAL = 30;
 
     // Animation
 

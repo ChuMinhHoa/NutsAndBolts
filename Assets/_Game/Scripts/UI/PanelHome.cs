@@ -39,4 +39,12 @@ public class PanelHome : UIPanel
         GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
         UIManager.instance.ShowPanelSetting();
     }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            UIManager.instance.ShowPanelLevelRace();
+        }
+    }
 }

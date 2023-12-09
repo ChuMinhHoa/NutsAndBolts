@@ -82,6 +82,9 @@ public class UIManager : MonoBehaviour {
                 case UIPanelType.PanelWinGame:
                     panel = Instantiate(Resources.Load("UI/PanelWinGame") as GameObject, mainCanvas);
                     break;
+                case UIPanelType.PanelLevelRace:
+                    panel = Instantiate(Resources.Load("UI/PanelLevelRace") as GameObject, mainCanvas);
+                    break;
             }
             if (panel) panel.SetActive(true);
             return panel;
@@ -157,6 +160,19 @@ public class UIManager : MonoBehaviour {
     public void ClosePanelWinGame() {
         isHasPopupOnScene = false;
         GameObject go = GetPanel(UIPanelType.PanelWinGame);
+        go.SetActive(false);
+    }
+
+    public void ShowPanelLevelRace()
+    {
+        isHasPopupOnScene = true;
+        GameObject go = GetPanel(UIPanelType.PanelLevelRace);
+        go.SetActive(true);
+    }
+    public void ClosePanelLevelRace()
+    {
+        isHasPopupOnScene = false;
+        GameObject go = GetPanel(UIPanelType.PanelLevelRace);
         go.SetActive(false);
     }
 }
