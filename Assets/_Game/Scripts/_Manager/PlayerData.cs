@@ -6,12 +6,14 @@ using UnityEngine;
 public class PlayerData
 {
     public PlayerResourceSave playerResource;
+    public LevelRaceSave levelRaceSave;
     //public SaveBase saveBase;
 
     public void LoadData()
     {
         //saveBase.LoadData();
         playerResource.LoadData();
+        levelRaceSave.LoadData();
     }
 
     public void SaveData()

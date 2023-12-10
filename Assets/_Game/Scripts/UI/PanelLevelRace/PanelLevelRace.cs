@@ -7,49 +7,144 @@ using UnityEngine.UI;
 
 public class PanelLevelRace : UIPanel
 {
+    [SerializeField] GameObject StartRaceObj;
+    [SerializeField] GameObject RaceJoinedObj;
+    [SerializeField] GameObject joinRaceByAds;
+    [SerializeField] Button joinBtn;
     [SerializeField] Button continueBtn;
+    [SerializeField] Button rewardBtn;
     [SerializeField] List<UIPlayerRaceInfo> uIPlayerRaceInfos;
+    [SerializeField] TextMeshProUGUI desTxt;
     [SerializeField] TextMeshProUGUI remainTimeTxt;
     [SerializeField] float remainTime;
+    List<RacersData> racers;
+    bool finished;
+    string raceDesciption = "Beat 30 levels before others to win the epic price";
+    string raceWonDescription = "You won";
+    string raceLoseDescription = "Better luck next time";
     public override void Awake()
     {
         panelType = UIPanelType.PanelLevelRace;
         base.Awake();
-        continueBtn.onClick.AddListener(PlayGame);
+        joinBtn.onClick.AddListener(JoinRace);
+        continueBtn.onClick.AddListener(Continue);
+        rewardBtn.onClick.AddListener(GetReward);
     }
 
     private void OnEnable()
     {
-        remainTime = 60 * 60;
-        SetUpList();
+        if (ProfileManager.Instance.playerData.levelRaceSave.raceStarted)
+        {
+            SetUpList();
+            remainTime = ProfileManager.Instance.playerData.levelRaceSave.GetRemainTime();
+            if (remainTime > 0)
+            {
+                finished = false;
+                desTxt.text = raceDesciption;
+                continueBtn.gameObject.SetActive(true);
+                rewardBtn.gameObject.SetActive(false);
+            }
+            else
+            {
+                GameOver();
+            }
+        }   
+        else
+        {
+            SetUpRaceInfo();
+        }
+            
+    }
+
+    void SetUpRaceInfo()
+    {
+        StartRaceObj.SetActive(true);
+        RaceJoinedObj.SetActive(false);
+        joinRaceByAds.SetActive(!ProfileManager.Instance.playerData.levelRaceSave.firstRace);
     }
 
     void SetUpList()
     {
-        for (int i = 0; i < uIPlayerRaceInfos.Count; i++)
+        StartRaceObj.SetActive(false);
+        RaceJoinedObj.SetActive(true);
+        racers = ProfileManager.Instance.playerData.levelRaceSave.GetRacerList();
+        for (int i = 0; i < racers.Count; i++)
         {
-            if(i == 0) 
-                uIPlayerRaceInfos[i].SetUp(30 - i * 3, true);
-            else
-                uIPlayerRaceInfos[i].SetUp(30 - i * 3, false, $"Mech {i}");
+            uIPlayerRaceInfos[i].SetUp(racers[i].levelReached, racers[i].player, racers[i].racerName);
         }   
     }
-
-    // Update is called once per frame
     void Update()
     {
-        remainTimeTxt.text = TimeUtil.TimeToString(remainTime, TimeFommat.Symbol);
-        remainTime -= Time.deltaTime;
+        if(!finished)
+        {
+            remainTimeTxt.text = TimeUtil.TimeToString(remainTime, TimeFommat.Symbol);
+            remainTime -= Time.deltaTime;
+        }
+        if(remainTime < 0 && !finished)
+        {
+            GameOver();
+        }
     }
 
-    void PlayGame()
+    void JoinRace()
     {
-        UIAnimationController.BtnAnimZoomBasic(continueBtn.transform, .25f, () => {
-            GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
-            UIManager.instance.ShowPanelLoading(() => {
-                UIManager.instance.ShowPanelMain();
-                UIManager.instance.ClosePanelLevelRace();
-            });
-        });
+        ProfileManager.Instance.playerData.levelRaceSave.StartRace();
+        desTxt.text = raceDesciption;
+        SetUpList();
+        continueBtn.gameObject.SetActive(true);
+        rewardBtn.gameObject.SetActive(false);
+        remainTime = ProfileManager.Instance.playerData.levelRaceSave.GetRemainTime();
+        finished = false;
     }
+
+    void GameOver()
+    {
+        finished = true;
+        remainTimeTxt.text = ConstantValue.STR_BLANK;
+        if (ProfileManager.Instance.playerData.levelRaceSave.IsWon())
+        {
+            continueBtn.gameObject.SetActive(false);
+            rewardBtn.gameObject.SetActive(true);
+            desTxt.text = raceWonDescription;
+        }
+        else
+        {
+            continueBtn.gameObject.SetActive(true);
+            rewardBtn.gameObject.SetActive(false);
+            desTxt.text = raceLoseDescription;
+        }
+    }
+
+    void Continue()
+    {
+        if(remainTime > 0)
+        {
+            //UIAnimationController.BtnAnimZoomBasic(continueBtn.transform, .25f, () => {
+            //    GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
+            //    UIManager.instance.ShowPanelLoading(() => {
+            //        UIManager.instance.ClosePanelLevelRace();
+            //    });
+            //});
+            UIManager.instance.ClosePanelLevelRace();
+        }
+        else
+        {
+            EndRace();
+            SetUpRaceInfo();
+        }
+    }
+
+    void GetReward()
+    {
+        ProfileManager.Instance.playerData.levelRaceSave.GetReward();
+        EndRace();
+    }
+
+    void EndRace()
+    {
+        ProfileManager.Instance.playerData.levelRaceSave.EndRace();
+        SetUpRaceInfo();
+    }
+
+    
 }

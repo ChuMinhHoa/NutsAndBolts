@@ -51,6 +51,30 @@ public class ConstantValue
     // UnlockLevel
     public static int skeleton_unlock_level = 5;
     public static int muscle_unlock_level = 10;
+
+    public static List<string> defaultName = new List<string>()
+    {
+        "James",
+        "Robert",
+        "John",
+        "David",
+        "Mark",
+        "Donald",
+        "Steven",
+        "Paul",
+        "Jason",
+        "Ryan",
+        "Gary",
+        "Eric",
+        "Mary",
+        "Linda",
+        "Susan",
+        "Sarah",
+        "Lisa",
+        "Emily",
+        "Laura"
+    };
+        
 }
 
 public enum VersionStatus
