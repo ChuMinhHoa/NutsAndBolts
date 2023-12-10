@@ -13,8 +13,8 @@ public enum PackType
 public enum ItemType
 {
     NoAds,
-    Blood,
-    Skeleton,
+    Coin,
+    Ticket,
 }
 
 [System.Serializable]

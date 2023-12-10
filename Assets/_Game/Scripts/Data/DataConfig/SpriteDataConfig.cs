@@ -5,6 +5,7 @@ using UnityEngine;
 public class SpriteDataConfig : ScriptableObject
 {
     public List<Sprite> sprBackGrounds;
+    public List<Sprite> sprItemIcon;
     public Sprite GetSpriteByName(string strName, List<Sprite> listSprite) {
         for (int i = 0; i < listSprite.Count; i++)
         {
@@ -17,5 +18,9 @@ public class SpriteDataConfig : ScriptableObject
     public Sprite GetBackGround() {
         int indexRandom = Random.Range(0, sprBackGrounds.Count);
         return sprBackGrounds[indexRandom];
+    }
+
+    public Sprite GetSpriteItemIcon(ItemType itemType) {
+        return GetSpriteByName(itemType.ToString(), sprItemIcon);
     }
 }

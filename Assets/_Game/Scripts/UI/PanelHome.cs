@@ -9,6 +9,7 @@ public class PanelHome : UIPanel
 {
     [SerializeField] Button btnPlay;
     [SerializeField] Button btnSetting;
+    [SerializeField] Button btnDailyQuest;
     [SerializeField] List<LevelSlot> levelSlots = new List<LevelSlot>();
     [SerializeField] LevelSlot levelSlotPref;
     [SerializeField] Transform trsSpawnSlot;
@@ -22,7 +23,7 @@ public class PanelHome : UIPanel
         base.Awake();
         btnPlay.onClick.AddListener(PlayGame);
         btnSetting.onClick.AddListener(ShowPanelSetting);
-       
+        btnDailyQuest.onClick.AddListener(ShowPanelDailyReward);
     }
 
     private void OnEnable()
@@ -103,7 +104,6 @@ public class PanelHome : UIPanel
     }
     float indexLevelCurrent = 0;
     void ScrollToCurrent() {
-        Debug.Log("Scroll");
         indexLevelCurrent = 0;
         for (int i = 0; i < levelSlots.Count; i++)
         {
@@ -144,5 +144,13 @@ public class PanelHome : UIPanel
         UIAnimationController.BtnAnimZoomBasic(btnSetting.transform, .25f);
         GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
         UIManager.instance.ShowPanelSetting();
+    }
+
+    void ShowPanelDailyReward() {
+        
+        UIAnimationController.BtnAnimZoomBasic(btnDailyQuest.transform, .25f,()=> {
+            GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
+            UIManager.instance.ShowPanelDailyQuest();
+        });
     }
 }

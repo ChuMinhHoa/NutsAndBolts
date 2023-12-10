@@ -24,5 +24,9 @@ public class GameManager : Singleton<GameManager>
         gamePlayController.FirstOpenScene();
     }
 
-
+    #region RewardManager
+    public void ClaimReward(ItemType itemType, float amount) {
+        UIManager.instance.ShowPanelDailyQuest();
+    }
+    #endregion
 }

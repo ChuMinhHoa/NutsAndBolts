@@ -7,6 +7,8 @@ public class DataConfig
 {
     public LevelDataConfig levelDataConfig;
     public MateritalDataConfig materitalDataConfig;
+    public SpriteDataConfig spriteDataConfig;
+    public QuestDataConfig questDataConfig;
 
     #region LevelDataConfig
     public LevelData GetLevelData(int level)
@@ -28,6 +30,12 @@ public class DataConfig
     public MaterialData GetMaterialData(int colorID)
     {
         return materitalDataConfig.GetMaterialData(colorID);
+    }
+    #endregion
+
+    #region SpriteDataConfig
+    public Sprite GetSpriteItemIcon(ItemType itemType) {
+        return spriteDataConfig.GetSpriteItemIcon(itemType);
     }
     #endregion
 }

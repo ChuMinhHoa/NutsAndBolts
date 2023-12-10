@@ -31,8 +31,11 @@ public class PanelSetting : UIPanel
         btnVibration.onClick.AddListener(ChangeVibrationStatus);
         btnClose.onClick.AddListener(OnClosePanel);
 
-        btnSoundSwitch.SetIsOn(onSound);
-        btnVibrationSwitch.SetIsOn(onVibration);
+        openAndCloseAnim.actionCallBackOnFirstLoad = () =>
+        {
+            btnSoundSwitch.SetIsOn(onSound);
+            btnVibrationSwitch.SetIsOn(onVibration);
+        };
     }
 
     void ChangeSoundStatus() {

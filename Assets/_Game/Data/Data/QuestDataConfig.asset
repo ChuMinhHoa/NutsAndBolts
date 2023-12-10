@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 123d6853e9dfaec41b21c559a9b88722, type: 3}
+  m_Name: QuestDataConfig
+  m_EditorClassIdentifier: 
+  questData:
+  - questName: Using Undo
+    questRequirebase: 0
+    questType: 0
+    questStarEarn: 0
+  - questName: Using Add Bulong
+    questRequirebase: 0
+    questType: 1
+    questStarEarn: 0
+  - questName: Complete Level
+    questRequirebase: 0
+    questType: 2
+    questStarEarn: 0
+  - questName: Complete Level Secret
+    questRequirebase: 0
+    questType: 3
+    questStarEarn: 0
+  - questName: Finish Race
+    questRequirebase: 0
+    questType: 4
+    questStarEarn: 0
+  - questName: Earn rank
+    questRequirebase: 0
+    questType: 5
+    questStarEarn: 0
+  dailyRewards:
+  - itemType: 1
+    amount: 5
+    pointGet: 10
+  - itemType: 1
+    amount: 15
+    pointGet: 25
+  - itemType: 2
+    amount: 3
+    pointGet: 50

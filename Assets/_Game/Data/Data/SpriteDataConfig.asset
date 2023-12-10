@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c33d51a27a917e4e91eab1002ceb8bc, type: 3}
+  m_Name: SpriteDataConfig
+  m_EditorClassIdentifier: 
+  sprBackGrounds: []
+  sprItemIcon:
+  - {fileID: 21300000, guid: 1e0204e4d32684272b7718888c21dd55, type: 3}
+  - {fileID: 21300000, guid: 0f0896949f77c4f8a9b1b9f26aeeacfe, type: 3}

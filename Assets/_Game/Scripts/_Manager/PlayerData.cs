@@ -6,12 +6,14 @@ using UnityEngine;
 public class PlayerData
 {
     public PlayerResourceSave playerResource;
+    public QuestDataSave questDataSave; 
     //public SaveBase saveBase;
 
     public void LoadData()
     {
         //saveBase.LoadData();
         playerResource.LoadData();
+        questDataSave.LoadData();
     }
 
     public void SaveData()

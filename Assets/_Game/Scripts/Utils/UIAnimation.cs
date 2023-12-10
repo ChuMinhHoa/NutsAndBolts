@@ -14,7 +14,8 @@ namespace UIAnimation {
         static Vector3 vectorScaleTo11 = new Vector3(1.1f, 1.1f, 1.1f);
         static Vector3 vectorScaleTo12 = new Vector3(1.2f, 1.2f, 1.2f);
         static Vector3 vectorScaleTo15 = new Vector3(1.5f, 1.5f, 1.5f);
-
+        static Vector3 vectorMove;
+        static Vector3 vectorStart;
         public static void BtnAnimType1(Transform trsDoAnim, float duration, UnityAction actioncallBack = null) {
             Sequence mainSquence = DOTween.Sequence();
             Sequence scaleSequence = DOTween.Sequence();
@@ -115,6 +116,17 @@ namespace UIAnimation {
                 if (actioncallBack != null)
                     actioncallBack();
             });
+        }
+
+        public static Sequence MoveUpAndDown(Transform trsMove, Vector3 vectorOffset, float duration) {
+            Sequence mainSequence = DOTween.Sequence();
+            vectorMove = trsMove.position + vectorOffset;
+            vectorStart = trsMove.position;
+            mainSequence.Append(trsMove.DOMove(vectorMove, duration));
+            mainSequence.Append(trsMove.DOMove(vectorStart, duration));
+            mainSequence.SetLoops(-1);
+            mainSequence.Play();
+            return mainSequence;
         }
     }
 }

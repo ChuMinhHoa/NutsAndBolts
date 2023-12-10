@@ -18,7 +18,7 @@ public class UIPanelAnimOpenAndClose : MonoBehaviour
     [HideInInspector] public Vector3 moveTarget;
     [HideInInspector] public Vector3 moveTargetOffset;
     Vector3 vectorScaleDefault = new Vector3(1f, 1f, 1f);
-
+    public UnityAction actionCallBackOnFirstLoad;
     private void OnEnable()
     {
         if (moveTarget == Vector3.zero && trsWrapPanel != null) moveTarget = trsWrapPanel.position;
@@ -43,6 +43,8 @@ public class UIPanelAnimOpenAndClose : MonoBehaviour
 
         canvasGroup.DOFade(1, .5f).OnComplete(() => {
             if (BGCanvasGroup != null) BGCanvasGroup.DOFade(1, 0.25f);
+            if (actionCallBackOnFirstLoad != null)
+                actionCallBackOnFirstLoad();
         });
     }
 
