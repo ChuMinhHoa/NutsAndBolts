@@ -61,6 +61,7 @@ public class LevelRaceSave : SaveBase
         raceStarted = true;
         DateTime endTime = DateTime.Now.AddHours(1);
         raceEndMark = endTime.ToString();
+        firstRace = false;
         IsMarkChangeData();
         SaveData();
     }
