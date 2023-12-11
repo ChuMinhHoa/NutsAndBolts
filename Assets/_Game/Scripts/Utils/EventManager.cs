@@ -14,7 +14,8 @@ public enum EventName
     ChangeLevel,
     ChangeState,
     CheckAbleOfButtonUndo,
-    ChangeSoundStatus
+    ChangeSoundStatus,
+    ChangeStarDailyQuest
 }
 
 public class EventManager : Singleton<EventManager>

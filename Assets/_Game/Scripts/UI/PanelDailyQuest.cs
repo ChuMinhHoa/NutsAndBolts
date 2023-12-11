@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UIAnimation;
+using DG.Tweening;
 
 public class PanelDailyQuest : UIPanel
 {
@@ -15,6 +16,7 @@ public class PanelDailyQuest : UIPanel
     [SerializeField] Transform trsPointStarTemp;
     [SerializeField] Button btnExit;
     [SerializeField] TextMeshProUGUI txtTimeCoolDown;
+    [SerializeField] DailyQuestSheet questSheet;
     double timeRemain;
     int starEarned;
 
@@ -22,11 +24,14 @@ public class PanelDailyQuest : UIPanel
     {
         panelType = UIPanelType.PanelDailyQuest;
         base.Awake();
+        EventManager.AddListener(EventName.ChangeStarDailyQuest.ToString(), ChangeProgressDailyReward);
     }
 
     private void OnEnable()
     {
         StartCoroutine(WaitToEndOfFrame());
+        questSheet.LoadData(ProfileManager.Instance.dataConfig.questDataConfig.questData);
+        questSheet.SetActionCallBack(ActionCallBack);
     }
 
     IEnumerator WaitToEndOfFrame() {
@@ -50,11 +55,22 @@ public class PanelDailyQuest : UIPanel
         txtTimeCoolDown.text = "Complete tasks in <color=#FF5D5D>" + TimeUtil.TimeToString((float)timeRemain)+"</color>";
     }
 
+    void ActionCallBack(SlotBase<QuestData> slotBase) {
+        ProfileManager.Instance.playerData.questDataSave.ClaimQuest(slotBase.data);
+    }
+
     void ClosePanel() {
         UIAnimationController.BtnAnimZoomBasic(btnExit.transform, .25f, ()=> {
             GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
             StopCoroutine(WaitToEndOfFrame());
             openAndCloseAnim.OnClose(()=> { UIManager.instance.ClosePanelDailyQuest(); });
+        });
+    }
+
+    public void ChangeProgressDailyReward() {
+        starEarned = ProfileManager.Instance.playerData.questDataSave.GetStarEarned();
+        DOVirtual.Float(progressDailyReward.value, starEarned, .25f, (value) => {
+            progressDailyReward.value = value;
         });
     }
 }

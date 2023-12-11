@@ -14,29 +14,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   questData:
   - questName: Using Undo
-    questRequirebase: 0
+    questRequirebase: 3
     questType: 0
-    questStarEarn: 0
+    questStarEarn: 5
   - questName: Using Add Bulong
-    questRequirebase: 0
+    questRequirebase: 5
     questType: 1
-    questStarEarn: 0
+    questStarEarn: 5
   - questName: Complete Level
-    questRequirebase: 0
+    questRequirebase: 20
     questType: 2
-    questStarEarn: 0
+    questStarEarn: 10
   - questName: Complete Level Secret
-    questRequirebase: 0
+    questRequirebase: 3
     questType: 3
-    questStarEarn: 0
+    questStarEarn: 10
   - questName: Finish Race
-    questRequirebase: 0
+    questRequirebase: 5
     questType: 4
-    questStarEarn: 0
+    questStarEarn: 15
   - questName: Earn rank
-    questRequirebase: 0
+    questRequirebase: 1
     questType: 5
-    questStarEarn: 0
+    questStarEarn: 30
+  - questName: Watch ADS
+    questRequirebase: 5
+    questType: 6
+    questStarEarn: 15
   dailyRewards:
   - itemType: 1
     amount: 5

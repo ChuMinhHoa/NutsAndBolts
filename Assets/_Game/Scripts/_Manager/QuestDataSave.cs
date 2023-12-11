@@ -9,7 +9,7 @@ public class QuestDataSave : SaveBase
     public int starsEarned;
     public int rewardEarned;
     public List<QuestSave> questSaves = new List<QuestSave>();
-
+    QuestSave questTemp;
     DateTime dateTimeOnQuest;
     public override void LoadData()
     {
@@ -67,10 +67,50 @@ public class QuestDataSave : SaveBase
     public bool CheckCanEarnQuest(int questIndex) {
         return questIndex > rewardEarned;
     }
+
+    public float GetCurrentProgress(QuestType questType) {
+        questTemp = questSaves.Find(e => e.questType == questType);
+        if (questTemp == null) return 0;
+        else return questTemp.progress;
+    }
+
+    public void ClaimQuest(QuestData questData) {
+        starsEarned += questData.questStarEarn;
+        questTemp = questSaves.Find(e => e.questType == questData.questType);
+        questTemp.earned = true;
+        GetReward();
+        EventManager.TriggerEvent(EventName.ChangeStarDailyQuest.ToString());
+    }
+
+    public bool IsClaimQuest(QuestType questType) {
+        questTemp = questSaves.Find(e => e.questType == questType);
+        if (questTemp == null) return true;
+        return questTemp.earned;
+    }
+
+    public void AddProgress(float amount, QuestType questType) {
+        questTemp = questSaves.Find(e => e.questType == questType);
+        if (questTemp == null)
+        {
+            QuestSave newQuestSave = new QuestSave();
+            newQuestSave.questType = questType;
+            newQuestSave.progress = amount;
+            questSaves.Add(newQuestSave);
+        }
+        else questTemp.progress += amount;
+        IsMarkChangeData();
+        SaveData();
+    }
+
+    public bool CheckShowNoticeQuest() {
+        questTemp = questSaves.Find(e => e.earned == false);
+        return questTemp != null;
+    }
 }
 
 [System.Serializable]
 public class QuestSave {
     public QuestType questType;
     public float progress;
+    public bool earned;
 }

@@ -6,6 +6,7 @@ using TMPro;
 using SDK;
 using UIAnimation;
 using DG.Tweening;
+using System;
 public class PanelMain : UIPanel
 {
     [Header("BUTTON")]
@@ -39,6 +40,7 @@ public class PanelMain : UIPanel
         EventManager.AddListener(EventName.ChangeLevel.ToString(), ChangeTextLevel);
         EventManager.AddListener(EventName.ChangeState.ToString(), ChangeTextState);
         EventManager.AddListener(EventName.CheckAbleOfButtonUndo.ToString(), CheckAbleUndo);
+        
     }
 
     void ChangeTextLevel() {
@@ -72,6 +74,7 @@ public class PanelMain : UIPanel
         UIAnimationController.BtnAnimZoomBasic(btnRePlay.transform, 0.25f, () =>
         {
             AdsManager.Instance.ShowInterstitial(null, null);
+            ProfileManager.Instance.playerData.questDataSave.AddProgress(1, QuestType.WatchADS);
             GameManager.Instance.gamePlayController.ReplayLevel();
         });
     }
@@ -84,6 +87,7 @@ public class PanelMain : UIPanel
         {
             if (!GameManager.Instance.gamePlayController.CheckCanUndo())
                 return;
+
             if (objADSUndo.activeSelf)
             {
                 if (ProfileManager.Instance.playerData.playerResource.IsCheatADS())
@@ -94,12 +98,17 @@ public class PanelMain : UIPanel
                     AdsManager.Instance.ShowRewardVideo(WatchVideoRewardType.Undo.ToString(), OnUndoADSSuccess, OnUndoADSFail);
             }
             else
+            {
                 GameManager.Instance.gamePlayController.Undo(false);
+                ProfileManager.Instance.playerData.questDataSave.AddProgress(1, QuestType.UsingUndo);
+            }
             txtCountUndo.text = GameManager.Instance.gamePlayController.GetCountUndo().ToString();
         });
     }
 
     void OnUndoADSSuccess() {
+        ProfileManager.Instance.playerData.questDataSave.AddProgress(1, QuestType.WatchADS);
+        ProfileManager.Instance.playerData.questDataSave.AddProgress(1, QuestType.UsingUndo);
         GameManager.Instance.gamePlayController.Undo(true);
     }
 
@@ -115,6 +124,7 @@ public class PanelMain : UIPanel
         {
             if (!GameManager.Instance.gamePlayController.CheckCanAddBulong() )
                 return;
+            
             if (ProfileManager.Instance.playerData.playerResource.IsCheatADS())
             {
                 WatchAdsAddBulongDone();
@@ -128,6 +138,8 @@ public class PanelMain : UIPanel
     }
 
     public void WatchAdsAddBulongDone() {
+        ProfileManager.Instance.playerData.questDataSave.AddProgress(1, QuestType.WatchADS);
+        ProfileManager.Instance.playerData.questDataSave.AddProgress(1, QuestType.UsingAddBulong);
         GameManager.Instance.gamePlayController.AddBulongToLine();
         btnAddBulong.interactable = GameManager.Instance.gamePlayController.CheckCanAddBulong();
     }

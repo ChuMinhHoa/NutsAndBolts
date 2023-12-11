@@ -14,6 +14,7 @@ public class PanelHome : UIPanel
     [SerializeField] LevelSlot levelSlotPref;
     [SerializeField] Transform trsSpawnSlot;
     [SerializeField] ScrollRect scroll;
+    [SerializeField] GameObject objNoticeQuest;
     int currentLevel;
     int maxLevel;
     int currentIndexOnMaxLevelSitution;
@@ -29,6 +30,7 @@ public class PanelHome : UIPanel
     private void OnEnable()
     {
         InitData();
+        objNoticeQuest.SetActive(ProfileManager.Instance.playerData.questDataSave.CheckShowNoticeQuest());
     }
 
     public void InitData() {
