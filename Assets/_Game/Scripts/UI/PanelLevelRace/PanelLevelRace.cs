@@ -1,3 +1,4 @@
+using SDK;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -13,6 +14,7 @@ public class PanelLevelRace : UIPanel
     [SerializeField] Button joinBtn;
     [SerializeField] Button continueBtn;
     [SerializeField] Button rewardBtn;
+    [SerializeField] Button btnCloseRace;
     [SerializeField] List<UIPlayerRaceInfo> uIPlayerRaceInfos;
     [SerializeField] TextMeshProUGUI desTxt;
     [SerializeField] TextMeshProUGUI remainTimeTxt;
@@ -29,6 +31,7 @@ public class PanelLevelRace : UIPanel
         joinBtn.onClick.AddListener(JoinRace);
         continueBtn.onClick.AddListener(Continue);
         rewardBtn.onClick.AddListener(GetReward);
+        btnCloseRace.onClick.AddListener(ClosePanel);
     }
 
     private void OnEnable()
@@ -48,12 +51,12 @@ public class PanelLevelRace : UIPanel
             {
                 GameOver();
             }
-        }   
+        }
         else
         {
             SetUpRaceInfo();
         }
-            
+
     }
 
     void SetUpRaceInfo()
@@ -68,19 +71,26 @@ public class PanelLevelRace : UIPanel
         StartRaceObj.SetActive(false);
         RaceJoinedObj.SetActive(true);
         racers = ProfileManager.Instance.playerData.levelRaceSave.GetRacerList();
-        for (int i = 0; i < racers.Count; i++)
-        {
-            uIPlayerRaceInfos[i].SetUp(racers[i].levelReached, racers[i].player, racers[i].racerName);
-        }   
+        indexSlot = 0;
+        StartCoroutine(CallSetUp());
     }
+    int indexSlot;
+    IEnumerator CallSetUp() { 
+        while (indexSlot< racers.Count) { 
+            yield return new WaitForSeconds(.15f);
+            uIPlayerRaceInfos[indexSlot].SetUp(racers[indexSlot].levelReached, racers[indexSlot].player, racers[indexSlot].racerName);
+            indexSlot++;
+        }
+    }
+
     void Update()
     {
-        if(!finished)
+        if (!finished)
         {
-            remainTimeTxt.text = TimeUtil.TimeToString(remainTime, TimeFommat.Symbol);
+            remainTimeTxt.text = "End in: <color=#FF6E3D>" + TimeUtil.TimeToString(remainTime) + "</color>";
             remainTime -= Time.deltaTime;
         }
-        if(remainTime < 0 && !finished)
+        if (remainTime < 0 && !finished)
         {
             GameOver();
         }
@@ -88,7 +98,19 @@ public class PanelLevelRace : UIPanel
 
     void JoinRace()
     {
+        if (ProfileManager.Instance.playerData.playerResource.isCheatADS)
+        {
+            JoinRaceSuccess();
+        }
+        else
+        {
+            AdsManager.Instance.ShowRewardVideo(WatchVideoRewardType.JoinRace.ToString(), JoinRaceSuccess);
+        }
+    }
+
+    void JoinRaceSuccess() {
         ProfileManager.Instance.playerData.levelRaceSave.StartRace();
+        GameManager.Instance.questManager.AddProgress(QuestType.WatchADS, 1);
         desTxt.text = raceDesciption;
         SetUpList();
         continueBtn.gameObject.SetActive(true);
@@ -117,21 +139,24 @@ public class PanelLevelRace : UIPanel
 
     void Continue()
     {
-        if(remainTime > 0)
-        {
-            //UIAnimationController.BtnAnimZoomBasic(continueBtn.transform, .25f, () => {
-            //    GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
-            //    UIManager.instance.ShowPanelLoading(() => {
-            //        UIManager.instance.ClosePanelLevelRace();
-            //    });
-            //});
-            UIManager.instance.ClosePanelLevelRace();
-        }
-        else
-        {
-            EndRace();
-            SetUpRaceInfo();
-        }
+        StopCoroutine(CallSetUp());
+        openAndCloseAnim.OnClose(() => {
+            if (remainTime > 0)
+            {
+                //UIAnimationController.BtnAnimZoomBasic(continueBtn.transform, .25f, () => {
+                //    GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
+                //    UIManager.instance.ShowPanelLoading(() => {
+                //        UIManager.instance.ClosePanelLevelRace();
+                //    });
+                //});
+                UIManager.instance.ClosePanelLevelRace();
+            }
+            else
+            {
+                EndRace();
+                SetUpRaceInfo();
+            }
+        });
     }
 
     void GetReward()
@@ -146,5 +171,8 @@ public class PanelLevelRace : UIPanel
         SetUpRaceInfo();
     }
 
-    
+    void ClosePanel() {
+        StopCoroutine(CallSetUp());
+        UIManager.instance.ClosePanelLevelRace();
+    }
 }

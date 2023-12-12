@@ -10,6 +10,7 @@ public class PanelHome : UIPanel
     [SerializeField] Button btnPlay;
     [SerializeField] Button btnSetting;
     [SerializeField] Button btnDailyQuest;
+    [SerializeField] Button btnRace;
     [SerializeField] List<LevelSlot> levelSlots = new List<LevelSlot>();
     [SerializeField] LevelSlot levelSlotPref;
     [SerializeField] Transform trsSpawnSlot;
@@ -25,6 +26,7 @@ public class PanelHome : UIPanel
         btnPlay.onClick.AddListener(PlayGame);
         btnSetting.onClick.AddListener(ShowPanelSetting);
         btnDailyQuest.onClick.AddListener(ShowPanelDailyReward);
+        btnRace.onClick.AddListener(ShowPanelRace);
     }
 
     private void OnEnable()
@@ -51,14 +53,14 @@ public class PanelHome : UIPanel
         int levelStartSpawn = currentLevel > 3 ? (currentLevel - 2) : currentLevel;
         for (int i = 0; i < 50; i++)
         {
-           
+
             LevelSlot newLevelSlot = Instantiate(levelSlotPref, trsSpawnSlot);
 
             if (levelStartSpawn < currentLevel) newLevelSlot.InitData(LevelMode.LastLevel, levelStartSpawn);
             if (levelStartSpawn > currentLevel) newLevelSlot.InitData(LevelMode.NextLevel, levelStartSpawn);
             if (levelStartSpawn == currentLevel)
             {
-                Debug.Log("Current level: " + currentLevel +" "+ levelStartSpawn);
+                Debug.Log("Current level: " + currentLevel + " " + levelStartSpawn);
                 newLevelSlot.InitData(LevelMode.Current, levelStartSpawn);
             }
             levelStartSpawn++;
@@ -84,9 +86,9 @@ public class PanelHome : UIPanel
         for (int i = 0; i < levelSlots.Count; i++)
         {
             levelSlots[i].gameObject.SetActive(true);
-            if (levelStartSpawn < currentLevel) 
+            if (levelStartSpawn < currentLevel)
                 levelSlots[i].InitData(LevelMode.LastLevel, levelStartSpawn);
-            if (levelStartSpawn > currentLevel) 
+            if (levelStartSpawn > currentLevel)
                 levelSlots[i].InitData(LevelMode.NextLevel, levelStartSpawn);
             if (levelStartSpawn == currentLevel)
                 levelSlots[i].InitData(LevelMode.Current, levelStartSpawn);
@@ -136,9 +138,9 @@ public class PanelHome : UIPanel
     }
 
     void PlayGame() {
-        UIAnimationController.BtnAnimZoomBasic(btnPlay.transform, .25f, ()=> {
+        UIAnimationController.BtnAnimZoomBasic(btnPlay.transform, .25f, () => {
             GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
-            UIManager.instance.ShowPanelLoading(()=> {
+            UIManager.instance.ShowPanelLoading(() => {
                 UIManager.instance.ShowPanelMain();
                 UIManager.instance.ClosePanelHome();
             });
@@ -157,6 +159,12 @@ public class PanelHome : UIPanel
         UIAnimationController.BtnAnimZoomBasic(btnDailyQuest.transform, .25f, () => {
             GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
             UIManager.instance.ShowPanelDailyQuest();
+        });
+    }
+    void ShowPanelRace() {
+        UIAnimationController.BtnAnimZoomBasic(btnRace.transform, .25f, () => {
+            GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
+            UIManager.instance.ShowPanelLevelRace();
         });
     }
 }

@@ -23,7 +23,8 @@ namespace SDK {
     public enum WatchVideoRewardType {
         NONE,
         Undo,
-        AddBulong
+        AddBulong,
+        JoinRace
     }
     
     [ScriptOrder(-99)]
