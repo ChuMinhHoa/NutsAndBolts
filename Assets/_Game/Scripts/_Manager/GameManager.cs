@@ -8,6 +8,7 @@ public class GameManager : Singleton<GameManager>
     public GamePlayController gamePlayController;
     public NiceVibrationsDemoManager vibrationManager;
     public AudioManager audioManager;
+    public QuestManager questManager;
 
     protected override void Awake()
     {

@@ -56,7 +56,7 @@ public class PanelDailyQuest : UIPanel
     }
 
     void ActionCallBack(SlotBase<QuestData> slotBase) {
-        ProfileManager.Instance.playerData.questDataSave.ClaimQuest(slotBase.data);
+        GameManager.Instance.questManager.ClaimQuest(slotBase.data);
     }
 
     void ClosePanel() {

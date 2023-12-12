@@ -466,6 +466,9 @@ public class GamePlayController : MonoBehaviour
                 SetDefault();
                 if (state == 1)
                 {
+                    if (levelSecret)
+                        GameManager.Instance.questManager.AddProgress(QuestType.CompleteLevelSecret, 1);
+                    GameManager.Instance.questManager.AddProgress(QuestType.CompleteLevel, 1);
                     levelSecret = false;
                     ProfileManager.Instance.playerData.playerResource.LevelUp(currentLevel + 1);
                     UIManager.instance.ShowPanelWinGame(ChangeLevel);

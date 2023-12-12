@@ -74,7 +74,7 @@ public class PanelMain : UIPanel
         UIAnimationController.BtnAnimZoomBasic(btnRePlay.transform, 0.25f, () =>
         {
             AdsManager.Instance.ShowInterstitial(null, null);
-            ProfileManager.Instance.playerData.questDataSave.AddProgress(1, QuestType.WatchADS);
+            GameManager.Instance.questManager.AddProgress(QuestType.WatchADS, 1);
             GameManager.Instance.gamePlayController.ReplayLevel();
         });
     }
@@ -107,8 +107,8 @@ public class PanelMain : UIPanel
     }
 
     void OnUndoADSSuccess() {
-        ProfileManager.Instance.playerData.questDataSave.AddProgress(1, QuestType.WatchADS);
-        ProfileManager.Instance.playerData.questDataSave.AddProgress(1, QuestType.UsingUndo);
+        GameManager.Instance.questManager.AddProgress(QuestType.WatchADS, 1);
+        GameManager.Instance.questManager.AddProgress(QuestType.UsingUndo, 1);
         GameManager.Instance.gamePlayController.Undo(true);
     }
 
@@ -138,8 +138,8 @@ public class PanelMain : UIPanel
     }
 
     public void WatchAdsAddBulongDone() {
-        ProfileManager.Instance.playerData.questDataSave.AddProgress(1, QuestType.WatchADS);
-        ProfileManager.Instance.playerData.questDataSave.AddProgress(1, QuestType.UsingAddBulong);
+        GameManager.Instance.questManager.AddProgress(QuestType.WatchADS, 1);
+        GameManager.Instance.questManager.AddProgress(QuestType.UsingAddBulong, 1);
         GameManager.Instance.gamePlayController.AddBulongToLine();
         btnAddBulong.interactable = GameManager.Instance.gamePlayController.CheckCanAddBulong();
     }
