@@ -128,6 +128,11 @@ public class PanelHome : UIPanel
                 scroll.verticalNormalizedPosition = value;
             });
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            UIManager.instance.ShowPanelLevelRace();
+        }
     }
 
     void PlayGame() {
@@ -147,10 +152,9 @@ public class PanelHome : UIPanel
         GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
         UIManager.instance.ShowPanelSetting();
     }
-
     void ShowPanelDailyReward() {
-        
-        UIAnimationController.BtnAnimZoomBasic(btnDailyQuest.transform, .25f,()=> {
+
+        UIAnimationController.BtnAnimZoomBasic(btnDailyQuest.transform, .25f, () => {
             GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
             UIManager.instance.ShowPanelDailyQuest();
         });

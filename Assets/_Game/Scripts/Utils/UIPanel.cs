@@ -11,7 +11,8 @@ public enum UIPanelType {
     PanelWinGame,
     PanelLoseGame,
     PanelDailyQuest,
-    PanelReward
+    PanelReward,
+    PanelLevelRace
 }
 public class UIPanel : MonoBehaviour {
     public bool isRegisterInUI = true;

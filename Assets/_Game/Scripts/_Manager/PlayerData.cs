@@ -7,6 +7,7 @@ public class PlayerData
 {
     public PlayerResourceSave playerResource;
     public QuestDataSave questDataSave; 
+    public LevelRaceSave levelRaceSave;
     //public SaveBase saveBase;
 
     public void LoadData()
@@ -14,6 +15,7 @@ public class PlayerData
         //saveBase.LoadData();
         playerResource.LoadData();
         questDataSave.LoadData();
+        levelRaceSave.LoadData();
     }
 
     public void SaveData()
