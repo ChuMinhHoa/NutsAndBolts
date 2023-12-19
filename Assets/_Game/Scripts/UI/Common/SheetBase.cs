@@ -10,7 +10,7 @@ public class SheetBase <Data> : MonoBehaviour
     public Transform trsParents;
     SlotBase<Data> slotTemp;
     UnityAction<SlotBase<Data>> actionCallback;
-    public void LoadData(List<Data> datas) {
+    public virtual void LoadData(List<Data> datas) {
         for (int i = 0; i < listSlots.Count; i++)
             listSlots[i].gameObject.SetActive(false);
         for (int i = 0; i < datas.Count; i++)

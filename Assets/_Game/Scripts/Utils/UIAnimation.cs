@@ -89,7 +89,7 @@ namespace UIAnimation {
             });
         }
 
-        public static void PopupBigZoom(Transform trsDoAnim, float duration, bool loop, UnityAction actioncallBack = null)
+        public static Sequence PopupBigZoom(Transform trsDoAnim, float duration, bool loop, UnityAction actioncallBack = null)
         {
             trsDoAnim.localScale = vectorScaleTo08;
             Sequence mainSquence = DOTween.Sequence();
@@ -102,6 +102,7 @@ namespace UIAnimation {
                 if (actioncallBack != null)
                     actioncallBack();
             });
+            return mainSquence;
         }
 
         public static void PopupBigZoomLoop(Transform trsDoAnim, float duration, UnityAction actioncallBack = null)

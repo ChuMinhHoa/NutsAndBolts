@@ -72,5 +72,10 @@ public class PanelDailyQuest : UIPanel
         DOVirtual.Float(progressDailyReward.value, starEarned, .25f, (value) => {
             progressDailyReward.value = value;
         });
+        for (int i = 0; i < pointClaimRewards.Count; i++)
+        {
+            bool canGetReward = starEarned >= dailyReward[i].pointGet && ProfileManager.Instance.playerData.questDataSave.CheckCanEarnQuest(i + 1);
+            pointClaimRewards[i].SetUpMode(canGetReward);
+        }
     }
 }

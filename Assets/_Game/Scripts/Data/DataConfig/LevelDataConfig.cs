@@ -35,7 +35,7 @@ public class LevelDataConfig : ScriptableObject
             levelData.TotalLine = Random.Range(2, 4);
             levelData.CountMaxInLine = Random.Range(3, 4);
             levelData.TotalBulong = levelData.TotalLine * levelData.CountMaxInLine - 1;
-            levelData.BulongFree = levelData.TotalBulong > 5 ? 2 : 1;
+            levelData.BulongFree = levelData.TotalBulong > 4 ? 2 : 1;
             levelData.TotalOcVit = 2;
             levelDataEasys.Add(levelData);
         }

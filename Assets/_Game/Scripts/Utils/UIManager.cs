@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 using UnityEngine.Events;
+using UIAnimation;
 
 public class UIManager : MonoBehaviour {
     public static UIManager instance;
@@ -88,6 +89,12 @@ public class UIManager : MonoBehaviour {
                 case UIPanelType.PanelLevelRace:
                     panel = Instantiate(Resources.Load("UI/PanelLevelRace") as GameObject, mainCanvas);
                     break;
+                case UIPanelType.PanelReward:
+                    panel = Instantiate(Resources.Load("UI/PanelReward") as GameObject, mainCanvas);
+                    break;
+                case UIPanelType.PanelConfirmUsingTicket:
+                    panel = Instantiate(Resources.Load("UI/PanelConfirmUsingTicket") as GameObject, mainCanvas);
+                    break;
             }
             if (panel) panel.SetActive(true);
             return panel;
@@ -156,6 +163,7 @@ public class UIManager : MonoBehaviour {
     public void ShowPanelWinGame(UnityAction actionDone) {
         GameManager.Instance.audioManager.PlaySound(SoundId.DoneLevel);
         isHasPopupOnScene = true;
+        Debug.Log("Show Panel win game");
         GameObject go = GetPanel(UIPanelType.PanelWinGame);
         go.SetActive(true);
         go.GetComponent<PanelWinGame>().SetActionCallBack(actionDone);
@@ -184,12 +192,14 @@ public class UIManager : MonoBehaviour {
         isHasPopupOnScene = true;
         GameObject go = GetPanel(UIPanelType.PanelReward);
         go.SetActive(true);
+        go.GetComponent<PanelReward>().InitData(itemType, amount);
     }
 
     public void ClosePanelReward()
     {
         isHasPopupOnScene = false;
         GameObject go = GetPanel(UIPanelType.PanelReward);
+        go.SetActive(false);
     }
 
     public void ShowPanelLevelRace()
@@ -202,6 +212,20 @@ public class UIManager : MonoBehaviour {
     {
         isHasPopupOnScene = false;
         GameObject go = GetPanel(UIPanelType.PanelLevelRace);
+        go.SetActive(false);
+    }
+
+    public void ShowPanelConfirmUsingTicket(UnityAction actionConfirmCallBack, UnityAction actionCancelCallback)
+    {
+        isHasPopupOnScene = true;
+        GameObject go = GetPanel(UIPanelType.PanelConfirmUsingTicket);
+        go.SetActive(true);
+        go.GetComponent<PanelConfirmUsingTicket>().InitData(actionConfirmCallBack, actionCancelCallback);
+    }
+    public void ClosePanelConfirmUsingTicket()
+    {
+        isHasPopupOnScene = false;
+        GameObject go = GetPanel(UIPanelType.PanelConfirmUsingTicket);
         go.SetActive(false);
     }
 }

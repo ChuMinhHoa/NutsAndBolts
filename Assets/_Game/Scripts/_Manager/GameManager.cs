@@ -27,7 +27,22 @@ public class GameManager : Singleton<GameManager>
 
     #region RewardManager
     public void ClaimReward(ItemType itemType, float amount) {
-        UIManager.instance.ShowPanelDailyQuest();
+        ProfileManager.Instance.playerData.questDataSave.GetReward();
+
+        switch (itemType)
+        {
+            case ItemType.NoAds:
+                break;
+            case ItemType.Coin:
+                ProfileManager.Instance.playerData.playerResource.AddCoin((int)amount);
+                break;
+            case ItemType.Ticket:
+                ProfileManager.Instance.playerData.playerResource.AddTicket((int)amount);
+                break;
+            default:
+                break;
+        }
+        UIManager.instance.ShowPanelReward(itemType, amount);
     }
     #endregion
 }

@@ -8,6 +8,8 @@ public class PlayerResourceSave : SaveBase
     public bool isCheatADS;
     public int playerLevel;
     public int stateOfLevel;
+    public int ticket;
+    public int coin;
 
     [Header("===================SETTING===================")]
     public bool soundOn;
@@ -22,6 +24,8 @@ public class PlayerResourceSave : SaveBase
             PlayerResourceSave data = JsonUtility.FromJson<PlayerResourceSave>(strJsonData);
             playerLevel = data.playerLevel;
             stateOfLevel = data.stateOfLevel;
+            ticket = data.ticket;
+            coin = data.coin;
             isCheatADS = data.isCheatADS;
             soundOn = data.soundOn;
             vibrationOn = data.vibrationOn;
@@ -29,6 +33,8 @@ public class PlayerResourceSave : SaveBase
         else {
             playerLevel = 0;
             stateOfLevel = 0;
+            ticket = 0;
+            coin = 0;
             isCheatADS = false;
             ChangeSoundStatus(true);
             ChangeVibrationStatus(true);
@@ -81,4 +87,31 @@ public class PlayerResourceSave : SaveBase
     public bool GetOnSound() { return soundOn; }
 
     public bool GetOnVibration() { return vibrationOn; }
+
+    public void AddTicket(int amount) {
+        ticket += amount;
+        EventManager.TriggerEvent(EventName.ChangeTicket.ToString());
+        IsMarkChangeData();
+        SaveData();
+    }
+    public void ConsumeTicket(int amount) {
+        ticket -= amount;
+        EventManager.TriggerEvent(EventName.ChangeTicket.ToString());
+        IsMarkChangeData();
+        SaveData();
+    }
+
+    public bool IsEnoughCoin(int amount) { return coin >= amount; }
+    public void AddCoin(int amount) {
+        coin += amount;
+        EventManager.TriggerEvent(EventName.ChangeCoin.ToString());
+        IsMarkChangeData();
+        SaveData();
+    }
+    public void ConsumeCoin(int amount) {
+        coin -= amount;
+        EventManager.TriggerEvent(EventName.ChangeCoin.ToString());
+        IsMarkChangeData();
+        SaveData();
+    }
 }

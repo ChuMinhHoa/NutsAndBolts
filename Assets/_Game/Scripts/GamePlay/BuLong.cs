@@ -48,7 +48,8 @@ public class BuLong : MonoBehaviour
     public void SetLineIndex(int lineIndex) { this.lineIndex = lineIndex; }
     public int GetLineIndex() { return lineIndex; }
 
-    public void InitScaleup(bool levelSecret = false) {
+    public void InitScaleup(bool levelSecret = false, bool addOnlyOne = false) {
+        int totalScale = addOnlyOne ? 1 : countScaleUp;
         levelIsSecret = levelSecret;
         for (int i = 0; i < objs.Count; i++)
         {
@@ -60,7 +61,7 @@ public class BuLong : MonoBehaviour
         Vector3 vectorCenterCollider = myCollider.center;
         Vector3 vectorSizerCollider = myCollider.size;
         Vector3 vectorPointInOut = Vector3.zero;
-        for (int i = 0; i < countScaleUp; i++)
+        for (int i = 0; i < totalScale; i++)
         {
             GetObjScale().localPosition = vetorOffset * i + vetorOffsetDe;
             colliderY += vetorOffset.y;
@@ -74,10 +75,16 @@ public class BuLong : MonoBehaviour
         vectorPointInOut.y = colliderY + vectorSpaceOcVit.y * 2f;
         pointOut.localPosition = vectorPointInOut;
 
-        for (int i = countScaleUp; i < objs.Count; i++)
+        for (int i = totalScale; i < objs.Count; i++)
             objs[i].gameObject.SetActive(false);
         ParticleSystem.ShapeModule shapeModule = myEffect.shape;
         shapeModule.length = colliderY;
+    }
+
+    public bool AddOneScaleUp() {
+        GetObjScale().localPosition = vetorOffset * (objs.Count-1) + vetorOffsetDe;
+        if (objs.Count == countScaleUp) return true;
+        return false;
     }
 
     Transform GetObjScale() {
@@ -99,7 +106,7 @@ public class BuLong : MonoBehaviour
     public void SetTotalOcVit(int ocVitCount) {
         totalOcVit = ocVitCount;
         countMaxSameColor = totalOcVit / 2;
-        countScaleUp = (totalOcVit / 2);
+        countScaleUp = totalOcVit;
     }
     public void SpawnOcVit(int ocVitCount)
     {
@@ -133,9 +140,8 @@ public class BuLong : MonoBehaviour
                     }
                     else {
                         colorID = GameManager.Instance.gamePlayController.GetColorSwitch(colorID, this);
-                        Debug.Log("Color ID switch: " + colorID);
                         materialData = GameManager.Instance.gamePlayController.GetMaterialData(colorID);
-                        listOcVit[ocVitIndex].InitMaterial(materialData);
+                        listOcVit[ocVitIndex].InitMaterial(materialData, colorID);
                         return;
                     }
                 }
@@ -146,7 +152,7 @@ public class BuLong : MonoBehaviour
         else countSameColor = 0;
         GameManager.Instance.gamePlayController.MinusColorRemain(colorID);
         materialData = GameManager.Instance.gamePlayController.GetMaterialData(colorID);
-        listOcVit[ocVitIndex].InitMaterial(materialData);
+        listOcVit[ocVitIndex].InitMaterial(materialData, colorID);
     }
     Vector3 vectorSpawnOcvit;
     OcVit GetOcVit()
@@ -173,6 +179,14 @@ public class BuLong : MonoBehaviour
             Destroy(listOcVit[i].gameObject);
         }
         listOcVit.Clear();
+    }
+    public void SetColorSaveToOcVit(List<int> colorID) {
+        for (int i = 0; i < listOcVit.Count; i++)
+        {
+            MaterialData materialData;
+            materialData = GameManager.Instance.gamePlayController.GetMaterialData(colorID[i]);
+            listOcVit[i].InitMaterial(materialData, colorID[i]);
+        }
     }
 
     #endregion
@@ -255,7 +269,7 @@ public class BuLong : MonoBehaviour
     public bool IsCanJoin(OcVit ocvit) {
         if (listOcVit.Count == 0)
             return true;
-        return listOcVit[listOcVit.Count - 1].IsSameColor(ocvit.GetColor());
+        return listOcVit[listOcVit.Count - 1].IsSameColor(ocvit.GetColor()) && listOcVit.Count < objs.Count;
     }
     public OcVit GetOcVitBehind() {
         if (listOcVit.Count == 0)
@@ -316,4 +330,6 @@ public class BuLong : MonoBehaviour
     public void ShowFailOtherColor() {
        
     }
+
+    public List<OcVit> ListOcVit { get { return listOcVit; } }
 }

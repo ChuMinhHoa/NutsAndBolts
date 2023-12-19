@@ -32,6 +32,10 @@ public class PointClaimReward : MonoBehaviour
         imgIcon.sprite = ProfileManager.Instance.dataConfig.GetSpriteItemIcon(itemType);
         txtPointClaim.text = pointClaim.ToString();
         txtReward.text = "+" + reward;
+        SetUpMode(canClaim);
+    }
+
+    public void SetUpMode(bool canClaim) {
         if (canClaim)
             ActiveMode();
         else
@@ -49,6 +53,8 @@ public class PointClaimReward : MonoBehaviour
     }
 
     void ClaimReward() {
+        GameManager.Instance.audioManager.PlaySound(SoundId.DoneLevel);
         GameManager.Instance.ClaimReward(itemType, reward);
+        DisAbleMode();
     }
 }

@@ -18,12 +18,16 @@ public class PanelMain : UIPanel
     [Header("TEXT")]
     [SerializeField] TextMeshProUGUI txtCurrentLevel;
     [SerializeField] TextMeshProUGUI txtState;
+    [SerializeField] TextMeshProUGUI txtTicket;
+    [SerializeField] TextMeshProUGUI txtCoin;
     [SerializeField] Text txtCountUndo;
 
     [Header("Object")]
     [SerializeField] GameObject objADSUndo;
     [SerializeField] GameObject objADSBulong;
     [SerializeField] GameObject objCountUndo;
+    [SerializeField] GameObject objCoinReplay;
+    [SerializeField] GameObject objAdsReplay;
 
     int replayCount;
 
@@ -37,11 +41,23 @@ public class PanelMain : UIPanel
         btnAddBulong.onClick.AddListener(AddBulong);
         ChangeTextLevel();
         ChangeTextState();
+        ChangeCoin();
+        ChangeTicket();
+      
         EventManager.AddListener(EventName.ChangeLevel.ToString(), ChangeTextLevel);
         EventManager.AddListener(EventName.ChangeState.ToString(), ChangeTextState);
         EventManager.AddListener(EventName.CheckAbleOfButtonUndo.ToString(), CheckAbleUndo);
+        EventManager.AddListener(EventName.ChangeTicket.ToString(), ChangeTicket);
+        EventManager.AddListener(EventName.ChangeCoin.ToString(), ChangeCoin);
         
     }
+
+    void ChangeCoin() { 
+        txtCoin.text = ProfileManager.Instance.playerData.playerResource.coin.ToString();
+        objCoinReplay.SetActive(ProfileManager.Instance.playerData.playerResource.IsEnoughCoin(10));
+        objAdsReplay.SetActive(!objCoinReplay.activeSelf);
+    }
+    void ChangeTicket() { txtTicket.text = ProfileManager.Instance.playerData.playerResource.ticket.ToString(); }
 
     void ChangeTextLevel() {
         txtCurrentLevel.text = "LEVEL " + (ProfileManager.Instance.playerData.playerResource.GetLevel() + 1).ToString();
@@ -52,7 +68,7 @@ public class PanelMain : UIPanel
     }
 
     void ChangeTextState() {
-        txtState.text = "STATE " + (ProfileManager.Instance.playerData.playerResource.GetState()+1).ToString();
+        txtState.text = "STATE " + (ProfileManager.Instance.playerData.playerResource.GetState()).ToString();
         btnAddBulong.interactable = true;
         txtCountUndo.text = "1";
         objADSUndo.SetActive(false);
@@ -73,10 +89,34 @@ public class PanelMain : UIPanel
         GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
         UIAnimationController.BtnAnimZoomBasic(btnRePlay.transform, 0.25f, () =>
         {
-            AdsManager.Instance.ShowInterstitial(null, null);
-            GameManager.Instance.questManager.AddProgress(QuestType.WatchADS, 1);
-            GameManager.Instance.gamePlayController.ReplayLevel();
+            if (ProfileManager.Instance.playerData.playerResource.IsEnoughCoin(10))
+            {
+                ProfileManager.Instance.playerData.playerResource.ConsumeCoin(10);
+                UIManager.instance.ShowPanelLoading(ReplaySuccess);
+            }
+            else
+            {
+                if (ProfileManager.Instance.playerData.playerResource.ticket > 0)
+                {
+                    UIManager.instance.ShowPanelConfirmUsingTicket(ReplaySuccess, ShowAdsReplay);
+                }
+                else { ShowAdsReplay(); }
+            }
         });
+    }
+
+    void ShowAdsReplay() {
+        if (ProfileManager.Instance.playerData.playerResource.isCheatADS) { ReplaySuccess(); }
+        else
+        {
+            AdsManager.Instance.ShowInterstitial(null, null);
+            ReplaySuccess();
+        }
+    }
+
+    void ReplaySuccess() {
+        GameManager.Instance.questManager.AddProgress(QuestType.WatchADS, 1);
+        GameManager.Instance.gamePlayController.ReplayLevel();
     }
 
     void Undo()
@@ -87,15 +127,16 @@ public class PanelMain : UIPanel
         {
             if (!GameManager.Instance.gamePlayController.CheckCanUndo())
                 return;
-
+            
             if (objADSUndo.activeSelf)
             {
-                if (ProfileManager.Instance.playerData.playerResource.IsCheatADS())
+                if (ProfileManager.Instance.playerData.playerResource.ticket > 0)
                 {
-                    OnUndoADSSuccess();
+                    UIManager.instance.ShowPanelConfirmUsingTicket(OnUndoADSSuccess, UndoCallBackPanelUsingticket);
                 }
-                else
-                    AdsManager.Instance.ShowRewardVideo(WatchVideoRewardType.Undo.ToString(), OnUndoADSSuccess, OnUndoADSFail);
+                else {
+                  
+                }
             }
             else
             {
@@ -104,6 +145,15 @@ public class PanelMain : UIPanel
             }
             txtCountUndo.text = GameManager.Instance.gamePlayController.GetCountUndo().ToString();
         });
+    }
+
+    void UndoCallBackPanelUsingticket() {
+        if (ProfileManager.Instance.playerData.playerResource.IsCheatADS())
+        {
+            OnUndoADSSuccess();
+        }
+        else
+            AdsManager.Instance.ShowRewardVideo(WatchVideoRewardType.Undo.ToString(), OnUndoADSSuccess, OnUndoADSFail);
     }
 
     void OnUndoADSSuccess() {
@@ -124,17 +174,26 @@ public class PanelMain : UIPanel
         {
             if (!GameManager.Instance.gamePlayController.CheckCanAddBulong() )
                 return;
-            
-            if (ProfileManager.Instance.playerData.playerResource.IsCheatADS())
+            if (ProfileManager.Instance.playerData.playerResource.ticket > 0)
             {
-                WatchAdsAddBulongDone();
+                UIManager.instance.ShowPanelConfirmUsingTicket(WatchAdsAddBulongDone, AddBulongCallBackPanelUsingticket);
             }
             else
             {
-                AdsManager.Instance.ShowRewardVideo(WatchVideoRewardType.AddBulong.ToString(), WatchAdsAddBulongDone);
+                AddBulongCallBackPanelUsingticket();
             }
-            btnAddBulong.interactable = true;
         });
+    }
+    void AddBulongCallBackPanelUsingticket()
+    {
+        if (ProfileManager.Instance.playerData.playerResource.IsCheatADS())
+        {
+            WatchAdsAddBulongDone();
+        }
+        else
+        {
+            AdsManager.Instance.ShowRewardVideo(WatchVideoRewardType.AddBulong.ToString(), WatchAdsAddBulongDone);
+        }
     }
 
     public void WatchAdsAddBulongDone() {

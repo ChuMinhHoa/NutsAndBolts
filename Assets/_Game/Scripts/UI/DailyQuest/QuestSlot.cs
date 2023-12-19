@@ -34,6 +34,7 @@ public class QuestSlot : SlotBase<QuestData>
 
     public override void OnChoose()
     {
+        GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
         base.OnChoose();
         btnChoose.interactable = false;
         objCheck.SetActive(true);

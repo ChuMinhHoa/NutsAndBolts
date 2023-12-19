@@ -78,7 +78,8 @@ public class QuestDataSave : SaveBase
         starsEarned += questData.questStarEarn;
         questTemp = questSaves.Find(e => e.questType == questData.questType);
         questTemp.earned = true;
-        GetReward();
+        IsMarkChangeData();
+        SaveData();
         EventManager.TriggerEvent(EventName.ChangeStarDailyQuest.ToString());
     }
 

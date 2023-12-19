@@ -5,6 +5,8 @@ using System.Linq;
 using DG.Tweening;
 using UnityEngine.Events;
 using SDK;
+using UnityEditor.Experimental.GraphView;
+using Unity.VisualScripting;
 public class GamePlayController : MonoBehaviour
 {
     [SerializeField] Camera mainCamera;
@@ -13,6 +15,8 @@ public class GamePlayController : MonoBehaviour
     [SerializeField] Vector3 vectorSpace;
     [SerializeField] Vector3 vectorScale;
     [SerializeField] Vector3 vectorPositionSpawn;
+    [SerializeField] Vector3 pointCameraOdd;
+    [SerializeField] Vector3 pointCameraEven;
     Vector3 lastPostion;
 
     [Header("INT")]
@@ -49,7 +53,8 @@ public class GamePlayController : MonoBehaviour
     BuLong currentBulong;
     OcVit ocVitBehind;
 
-    [SerializeField] List<BuLong> buLongs;
+    [SerializeField] List<BuLong> buLongs = new List<BuLong>();
+    [SerializeField] BuLong buLongAddedByWatch;
     [SerializeField] BuLong bulongPref;
     [SerializeField] Transform parentSpawnBulong;
 
@@ -58,26 +63,41 @@ public class GamePlayController : MonoBehaviour
     List<MaterialOnCount> colorRemOnCount = new List<MaterialOnCount>();
     List<int> listColorIDs = new List<int>();
 
+    bool firstLoad = true;
+
     public void FirstOpenScene()
     {
+        levelData = ProfileManager.Instance.playerData.colorLevelSave.levelData;
         currentLevel = ProfileManager.Instance.playerData.playerResource.GetLevel();
         state = ProfileManager.Instance.playerData.playerResource.GetState();
         countUndoRemain = 1;
-        if (state == 1)
+        if (levelData.BulongFree != 0)
         {
-            levelData = ProfileManager.Instance.dataConfig.GetLevelData(currentLevel);
-            levelSecret = (currentLevel+1) > 6 && (currentLevel + 1) % 3 == 0;
+            if (state == 1) levelSecret = (currentLevel + 1) > 3 && (currentLevel + 1) % 2 == 0;
+            else levelSecret = false;
             SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
+            firstLoad = false;
         }
         else
         {
-            if (currentLevel < 3)
-                levelData = ProfileManager.Instance.dataConfig.GetLevel1Data(); 
-            else 
-                levelData = ProfileManager.Instance.dataConfig.GetLevelEasy();
-            levelSecret = false;
-            SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
+            firstLoad = false;
+            if (state == 1)
+            {
+                levelData = ProfileManager.Instance.dataConfig.GetLevelData(currentLevel);
+                levelSecret = (currentLevel + 1) > 3 && (currentLevel + 1) % 2 == 0;
+                SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
+            }
+            else
+            {
+                if (currentLevel < 3)
+                    levelData = ProfileManager.Instance.dataConfig.GetLevel1Data();
+                else
+                    levelData = ProfileManager.Instance.dataConfig.GetLevelEasy();
+                levelSecret = false;
+                SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
+            }
         }
+        
     }
 
 
@@ -95,16 +115,28 @@ public class GamePlayController : MonoBehaviour
         ResetBulongOcVit();
         InitColor();
         InitBulong();
+        ProfileManager.Instance.playerData.colorLevelSave.SaveColorLevel(buLongs, levelData);
     }
     void ChangeCamera() {
         GetCurrentMaxLine();
-        if (currentCountBulongMaxInline > 3)
+        if (totalLine < 3)
+        {
+            DOVirtual.Float(mainCamera.orthographicSize, 20, .25f, (value) => { mainCamera.orthographicSize = value; });
+        }
+        else if (totalLine >= 3 && totalLine <= 4) 
         {
             DOVirtual.Float(mainCamera.orthographicSize, 25, .25f, (value) => { mainCamera.orthographicSize = value; });
         }
-        else
+        else {
+            DOVirtual.Float(mainCamera.orthographicSize, 28, .25f, (value) => { mainCamera.orthographicSize = value; });
+        }
+
+        if (totalLine % 2 == 0)
         {
-            DOVirtual.Float(mainCamera.orthographicSize, 20, .25f, (value) => { mainCamera.orthographicSize = value; });
+            mainCamera.transform.DOMove(pointCameraOdd, .25f);
+        }
+        else {
+            mainCamera.transform.DOMove(pointCameraEven, .25f);
         }
     }
     void GetCurrentMaxLine() {
@@ -116,7 +148,7 @@ public class GamePlayController : MonoBehaviour
                 currentCountBulongMaxInline = countI;
         }
     }
-    #region Bu Long
+    #region ========================== Bu Long ==========================
     void ResetBulongOcVit() {
         for (int i = 0; i < buLongs.Count; i++)
         {
@@ -161,7 +193,7 @@ public class GamePlayController : MonoBehaviour
         {
             if (i % 2 != 0)
                 lineOdd++;
-            SpawnBulong(i, countInLine[i], lineOdd);
+            SpawnBulong(i, countInLine[i], lineOdd, false);
         }
         SetBulongNull();
         for (int i = 0; i < totalCount; i++)
@@ -174,28 +206,54 @@ public class GamePlayController : MonoBehaviour
     List<BuLong> listBulongAble = new List<BuLong>();
 
     void SetColorToOcVit() {
-
-        for (int i = 0; i < ocVitCount; i++)
+        if (firstLoad)
         {
-            for (int j = 0; j < buLongs.Count; j++)
+            bulongSaves = ProfileManager.Instance.playerData.colorLevelSave.GetBulongSave();
+            for (int i = 0; i < buLongs.Count; i++)
             {
-                if (!buLongs[j].isNull && buLongs[j].gameObject.activeSelf) buLongs[j].SetColorToOcVit(i);
+                buLongs[i].SetColorSaveToOcVit(bulongSaves[i].colorIDs);
             }
         }
-
+        else
+        {
+            for (int i = 0; i < ocVitCount; i++)
+            {
+                for (int j = 0; j < buLongs.Count; j++)
+                {
+                    if (!buLongs[j].isNull && buLongs[j].gameObject.activeSelf) buLongs[j].SetColorToOcVit(i);
+                }
+            }
+        }
     }
 
     void SetBulongNull() {
-        for (int i = 0; i < bulongFreeCount; i++)
+        if (!firstLoad)
         {
+            for (int i = 0; i < bulongFreeCount; i++)
+            {
+                listBulongAble = buLongs.Where(e => e.gameObject.activeSelf && !e.isNull).ToList();
+                bulongNullIndex = Random.Range(0, listBulongAble.Count);
+                listBulongAble[bulongNullIndex].isNull = true;
+            }
+        }
+        else {
+            bulongSaves = ProfileManager.Instance.playerData.colorLevelSave.GetBulongSave();
             listBulongAble = buLongs.Where(e => e.gameObject.activeSelf && !e.isNull).ToList();
-            bulongNullIndex = Random.Range(0, listBulongAble.Count);
-            listBulongAble[bulongNullIndex].isNull = true;
+            for (int i = 0; i < bulongSaves.Count; i++)
+            {
+                
+                Debug.Log("color on bulong save: "+bulongSaves[i].colorIDs.Count);
+                if (bulongSaves[i].colorIDs.Count == 0)
+                {
+                    listBulongAble[i].isNull = true;
+                }
+            }
         }
     }
 
+    #region Add new bulong
     public void AddBulongToLine() {
-        bulongOnActive++;
+        
         lineOddTemp = lineOdd;
         vectorPositionSpawn.z = 0;
         for (int i = countInLine.Count - 1; i >= 0; i--)
@@ -205,11 +263,16 @@ public class GamePlayController : MonoBehaviour
             {
                 lineOddTemp = 0;
             }
-            if (countInLine[i] < countMaxInLine)
+            if (countInLine[i] < countMaxInLine || buLongAddedByWatch != null)
             {
-                countInLine[i]++;
-                DeactiveBulongInLine(i);
-                SpawnBulong(i, countInLine[i], lineOddTemp);
+                if (buLongAddedByWatch == null)
+                {
+                    bulongOnActive++;
+                    SpawnNewBulong(i);
+                }
+                else {
+                    if (buLongAddedByWatch.AddOneScaleUp()) buLongAddedByWatch = null;
+                }
                 break;
             }
             if (i % 2 != 0)
@@ -217,6 +280,13 @@ public class GamePlayController : MonoBehaviour
         }
         ChangeCamera();
     }
+
+    void SpawnNewBulong(int lineIndex) {
+        countInLine[lineIndex]++;
+        DeactiveBulongInLine(lineIndex);
+        SpawnBulong(lineIndex, countInLine[lineIndex], lineOddTemp, true);
+    }
+    #endregion
 
     void DeactiveBulongInLine(int lineIndex) {
         for (int i = 0; i < buLongs.Count; i++)
@@ -226,7 +296,7 @@ public class GamePlayController : MonoBehaviour
         }
     }
 
-    void SpawnBulong(int lineIndex, int totalBulongInLine, int lineOdd) {
+    void SpawnBulong(int lineIndex, int totalBulongInLine, int lineOdd, bool ads) {
         if (lineIndex % 2 != 0)
         {
             vectorPositionSpawn.z = -vectorSpace.z * lineOdd;
@@ -256,12 +326,20 @@ public class GamePlayController : MonoBehaviour
             newBuLong1.InitScaleup(levelSecret);
             lastPostion.x = vectorPositionSpawn.x;
 
+            
             vectorPositionSpawn.x *= -1;
             BuLong newBuLong2 = GetBulong();
             newBuLong2.transform.position = vectorPositionSpawn;
             newBuLong2.SetLineIndex(lineIndex);
             newBuLong2.SetTotalOcVit(ocVitCount);
-            newBuLong2.InitScaleup(levelSecret);
+            if (i == totalBulongInLine / 2)
+            {
+                newBuLong2.InitScaleup(levelSecret, ads);
+                buLongAddedByWatch = ads ? newBuLong2 : null;
+            }
+            else
+                newBuLong2.InitScaleup(levelSecret);
+
         }
     }
 
@@ -281,7 +359,7 @@ public class GamePlayController : MonoBehaviour
     }
     #endregion
 
-    #region Controll
+    #region ========================== Controll ==========================
     public List<StepMoveOcVit> stepMoveOcVits = new List<StepMoveOcVit>();
     public List<OcVit> ocVitOnMove = new List<OcVit>();
     public void OnChooseCurrentOcVit(OcVit ocVit, BuLong bulong, UnityAction actionDone = null) {
@@ -410,8 +488,8 @@ public class GamePlayController : MonoBehaviour
     }
     #endregion
 
-    #region Random Color
-
+    #region ========================== Random Color ==========================
+    List<BulongSave> bulongSaves = new List<BulongSave>();
     void InitColor() {
         listColorIDs = ProfileManager.Instance.dataConfig.GetRandomMaterial(totalColor);
         colorRemaining.Clear();
@@ -452,7 +530,7 @@ public class GamePlayController : MonoBehaviour
     }
     #endregion
 
-    #region Game Follow
+    #region ========================== Game Follow ==========================
     int currentBulongDoneCount = 0;
     public void OnDoneBulong() {
         GameManager.Instance.audioManager.PlaySound(SoundId.DoneBulong);
@@ -460,12 +538,14 @@ public class GamePlayController : MonoBehaviour
         DOVirtual.DelayedCall(.5f, () => {
             if (currentBulongDoneCount == totalColor)
             {
+                Debug.Log("Level Up");
                 currentBulongDoneCount = 0;
                 stepMoveOcVits.Clear();
                 countUndoRemain = 1;
                 SetDefault();
                 if (state == 1)
                 {
+                    Debug.Log("level: "+currentLevel);
                     if (levelSecret)
                         GameManager.Instance.questManager.AddProgress(QuestType.CompleteLevelSecret, 1);
                     GameManager.Instance.questManager.AddProgress(QuestType.CompleteLevel, 1);
@@ -487,7 +567,7 @@ public class GamePlayController : MonoBehaviour
         ProfileManager.Instance.playerData.playerResource.ChangeState(1);
         state = 1;
         levelData = ProfileManager.Instance.dataConfig.GetLevelData(currentLevel);
-        levelSecret = ((currentLevel + 1) > 6 && (currentLevel + 1) % 3 == 0);
+        levelSecret = ((currentLevel + 1) > 3 && (currentLevel + 1) % 2 == 0);
         SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
     }
 
@@ -510,28 +590,27 @@ public class GamePlayController : MonoBehaviour
 
     public void ReplayLevel() {
         currentBulongDoneCount = 0;
-        if (state == 1)
-        {
-            levelData = ProfileManager.Instance.dataConfig.GetLevelData(currentLevel);
-            SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
-        }
-        else
-        {
-            if (currentLevel < 3)
-                levelData = ProfileManager.Instance.dataConfig.GetLevel1Data();
-            else
-                levelData = ProfileManager.Instance.dataConfig.GetLevelEasy();
-            SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
-        }
+        firstLoad = true;
+        levelData = ProfileManager.Instance.playerData.colorLevelSave.levelData;
+        currentLevel = ProfileManager.Instance.playerData.playerResource.GetLevel();
+        state = ProfileManager.Instance.playerData.playerResource.GetState();
+        SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
+        countUndoRemain = 1;
         SetDefault();
+        firstLoad = false;
         stepMoveOcVits.Clear();
     }
     public bool CheckCanUndo() { return stepMoveOcVits.Count > 0; }
     public int GetCountUndo() { return countUndoRemain; }
     public bool CheckShowObjUndo() { return countUndoRemain == 0; }
-    public bool CheckCanAddBulong() { return totalLine * countMaxInLine > bulongOnActive; }
+    public bool CheckCanAddBulong() {
+        if (buLongAddedByWatch == null)
+            return (totalLine * countMaxInLine > bulongOnActive);
+        else 
+            return true;
+    }
 
-    #region Undo
+    #region ========================== Undo ==========================
     public bool onUndo;
     public void Undo(bool isADS = false) {
         if (countUndoRemain == 0 && !isADS)
@@ -612,6 +691,24 @@ public class GamePlayController : MonoBehaviour
         buLong.CheckBulongIsDone();
     }
     #endregion
+
+    float currentTime;  
+    private void Update()
+    {
+        if (currentTime > 60)
+        {
+            currentTime = 0;
+            AdsManager.Instance.ShowInterstitial(null, null);
+        }
+        else {
+            currentTime += Time.deltaTime;
+        }
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            levelData = ProfileManager.Instance.dataConfig.GetLevelData(currentLevel);
+            SetDataLevel(levelData.TotalLine, levelData.TotalBulong, levelData.CountMaxInLine, levelData.TotalOcVit, levelData.BulongFree);
+        }
+    }
 }
 [System.Serializable]
 public class MaterialOnCount {

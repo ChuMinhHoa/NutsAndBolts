@@ -16,6 +16,7 @@ public class OcVit : MonoBehaviour
     MaterialData materialData;
     Material[] materials = new Material[1];
     Color colorOutline;
+    public int colorID;
     public void InitData(Vector3 pointSpawn, bool isSecret = false)
     {
         myEffect.Stop();
@@ -24,7 +25,8 @@ public class OcVit : MonoBehaviour
         this.isSecret = isSecret;
     }
 
-    public void InitMaterial(MaterialData materialData) {
+    public void InitMaterial(MaterialData materialData, int colorID) {
+        this.colorID = colorID;
         this.materialData = materialData;
         materials[0] = materialData.material;
         meshRenderer.materials = materials;
@@ -79,7 +81,7 @@ public class OcVit : MonoBehaviour
     {
         int currentColorID = materialData.colorID;
         materialData = GameManager.Instance.gamePlayController.GetMaterialData(colorID);
-        InitMaterial(materialData);
+        InitMaterial(materialData, colorID);
         return currentColorID;
     }
 
