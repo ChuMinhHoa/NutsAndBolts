@@ -139,24 +139,20 @@ public class PanelLevelRace : UIPanel
 
     void Continue()
     {
+        remainTime = ProfileManager.Instance.playerData.levelRaceSave.GetRemainTime();
+        Debug.Log(remainTime);
         StopCoroutine(CallSetUp());
-        openAndCloseAnim.OnClose(() => {
-            if (remainTime > 0)
-            {
-                //UIAnimationController.BtnAnimZoomBasic(continueBtn.transform, .25f, () => {
-                //    GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
-                //    UIManager.instance.ShowPanelLoading(() => {
-                //        UIManager.instance.ClosePanelLevelRace();
-                //    });
-                //});
+        if (remainTime > 0)
+        {
+            openAndCloseAnim.OnClose(() => {
                 UIManager.instance.ClosePanelLevelRace();
-            }
-            else
-            {
-                EndRace();
-                SetUpRaceInfo();
-            }
-        });
+            });
+        }
+        else
+        {
+            EndRace();
+        }
+        
     }
 
     void GetReward()
