@@ -692,17 +692,39 @@ public class GamePlayController : MonoBehaviour
     }
     #endregion
 
-    float currentTime;  
+    [SerializeField] float currentTime;
+    [SerializeField] float timeShowInter;
+    bool isShowNotice;
+    PanelMain panelMain;
     private void Update()
     {
-        if (currentTime > 60)
+        if (currentTime > timeShowInter)
         {
             currentTime = 0;
             AdsManager.Instance.ShowInterstitial(null, null);
+            if (panelMain != null) panelMain.DisAbleNotice();
+            isShowNotice = false;
         }
         else {
             currentTime += Time.deltaTime;
         }
+        if (UIManager.instance.panelMain != null)
+        {
+            if (currentTime >= timeShowInter - 10f) {
+          
+                if (!isShowNotice)
+                {
+                    isShowNotice = true;
+                    if (panelMain == null)
+                        panelMain = UIManager.instance.panelMain;
+                    panelMain.ShowNoticeADS();
+                }
+                else {
+                    panelMain.ChangeTextNoticeTime(timeShowInter- currentTime);
+                }
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.V))
         {
             levelData = ProfileManager.Instance.dataConfig.GetLevelData(currentLevel);

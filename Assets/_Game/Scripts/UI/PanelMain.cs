@@ -9,6 +9,8 @@ using DG.Tweening;
 using System;
 public class PanelMain : UIPanel
 {
+    [Header("IMAGE")]
+    [SerializeField] Image imgFill;
     [Header("BUTTON")]
     [SerializeField] Button btnHome;
     [SerializeField] Button btnRePlay;
@@ -20,6 +22,8 @@ public class PanelMain : UIPanel
     [SerializeField] TextMeshProUGUI txtState;
     [SerializeField] TextMeshProUGUI txtTicket;
     [SerializeField] TextMeshProUGUI txtCoin;
+    [SerializeField] TextMeshProUGUI txtTimeCooldown;
+    [SerializeField] TextMeshProUGUI txtTimeCooldownNumber;
     [SerializeField] Text txtCountUndo;
 
     [Header("Object")]
@@ -28,6 +32,10 @@ public class PanelMain : UIPanel
     [SerializeField] GameObject objCountUndo;
     [SerializeField] GameObject objCoinReplay;
     [SerializeField] GameObject objAdsReplay;
+    [SerializeField] GameObject objNoticeADS;
+
+    [Header("Rect")]
+    [SerializeField] RectTransform rectNoticeTimeCooldown;
 
     int replayCount;
 
@@ -204,12 +212,40 @@ public class PanelMain : UIPanel
     }
 
     void Home() {
-        UIAnimationController.BtnAnimZoomBasic(btnHome.transform, 0.25f, () =>
+        UIAnimationController.BtnAnimZoomBasic(btnHome.transform, 0.5f, () =>
         {
+            CancelInvoke("DisAbleTextNotice");
             GameManager.Instance.audioManager.PlaySound(SoundId.UIClick);
             UIManager.instance.ClosePanelMain();
             UIManager.instance.ShowPanelHome();
         });
+    }
+
+    Vector2 vectorRectTimeDefault;
+    [SerializeField] float widthTimeNotice;
+    public void ShowNoticeADS() {
+        vectorRectTimeDefault.x = 0;
+        vectorRectTimeDefault.y = rectNoticeTimeCooldown.sizeDelta.y;
+        rectNoticeTimeCooldown.sizeDelta = vectorRectTimeDefault;
+        vectorRectTimeDefault.x = widthTimeNotice;
+        objNoticeADS.SetActive(true);
+        rectNoticeTimeCooldown.DOSizeDelta(vectorRectTimeDefault, .5f);
         
+        Invoke("DisAbleTextNotice", 3f);
+    }
+
+    public void DisAbleNotice() { objNoticeADS.SetActive(false); }
+
+    void DisAbleTextNotice()
+    {
+        vectorRectTimeDefault.x = 0;
+        vectorRectTimeDefault.y = rectNoticeTimeCooldown.sizeDelta.y;
+        rectNoticeTimeCooldown.DOSizeDelta(vectorRectTimeDefault, .25f);
+    }
+
+    public void ChangeTextNoticeTime(float timeRemain) {
+        txtTimeCooldown.text = "Ads show in "+ (int)timeRemain + " seconds!";
+        txtTimeCooldownNumber.text = ((int)timeRemain).ToString();
+        imgFill.fillAmount = 1f - timeRemain / 10f;
     }
 }

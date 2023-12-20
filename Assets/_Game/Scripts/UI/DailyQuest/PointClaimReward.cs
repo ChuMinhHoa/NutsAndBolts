@@ -16,6 +16,7 @@ public class PointClaimReward : MonoBehaviour
     [SerializeField] Vector3 vetorOffSet;
     [SerializeField] Animator anim;
     [SerializeField] Button btnClaim;
+    [SerializeField] GameObject objCheck;
 
     float reward;
     ItemType itemType;
@@ -23,7 +24,7 @@ public class PointClaimReward : MonoBehaviour
     {
         btnClaim.onClick.AddListener(ClaimReward);
     }
-    public void InitData(Vector2 vectorScale, Vector3 pointTransform, int reward, int pointClaim, ItemType itemType, bool canClaim)
+    public void InitData(Vector2 vectorScale, Vector3 pointTransform, int reward, int pointClaim, ItemType itemType, bool canClaim, bool earned)
     {
         this.reward = reward;
         this.itemType = itemType;
@@ -33,6 +34,7 @@ public class PointClaimReward : MonoBehaviour
         txtPointClaim.text = pointClaim.ToString();
         txtReward.text = "+" + reward;
         SetUpMode(canClaim);
+        objCheck.gameObject.SetActive(earned);
     }
 
     public void SetUpMode(bool canClaim) {
@@ -56,5 +58,6 @@ public class PointClaimReward : MonoBehaviour
         GameManager.Instance.audioManager.PlaySound(SoundId.DoneLevel);
         GameManager.Instance.ClaimReward(itemType, reward);
         DisAbleMode();
+        objCheck.gameObject.SetActive(true);   
     }
 }

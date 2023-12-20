@@ -18,6 +18,7 @@ public class UIManager : MonoBehaviour {
     public bool isHasPanelIgnoreTutorial = false;
     [SerializeField] RectTransform myRect;
     [SerializeField] GameObject ingameDebugConsole;
+    public PanelMain panelMain;
 
     public Camera mainCamera;
 
@@ -139,6 +140,8 @@ public class UIManager : MonoBehaviour {
     public void ShowPanelMain() {
         GameObject go = GetPanel(UIPanelType.PanelMain);
         go.SetActive(true);
+        if (panelMain == null)
+            panelMain = go.GetComponent<PanelMain>();
     }
     public void ClosePanelMain() {
         GameObject go = GetPanel(UIPanelType.PanelMain);

@@ -42,8 +42,10 @@ public class PanelDailyQuest : UIPanel
         for (int i = 0; i < pointClaimRewards.Count; i++)
         {
             progressDailyReward.value = dailyReward[i].pointGet;
-            bool canGetReward = starEarned >= dailyReward[i].pointGet && ProfileManager.Instance.playerData.questDataSave.CheckCanEarnQuest(i + 1);
-            pointClaimRewards[i].InitData(vectorScale + vectorScaleOffset * i, trsPointStarTemp.position, (int)dailyReward[i].amount, dailyReward[i].pointGet, dailyReward[i].itemType, canGetReward);
+            bool earned = !ProfileManager.Instance.playerData.questDataSave.CheckCanEarnQuest(i + 1);
+            bool canGetReward = starEarned >= dailyReward[i].pointGet && !earned;
+            
+            pointClaimRewards[i].InitData(vectorScale + vectorScaleOffset * i, trsPointStarTemp.position, (int)dailyReward[i].amount, dailyReward[i].pointGet, dailyReward[i].itemType, canGetReward, earned);
         }
         progressDailyReward.value = starEarned;
         btnExit.onClick.AddListener(ClosePanel);
