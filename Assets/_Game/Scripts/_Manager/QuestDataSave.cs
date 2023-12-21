@@ -64,8 +64,8 @@ public class QuestDataSave : SaveBase
         SaveData();
     }
 
-    public bool CheckCanEarnQuest(int questIndex) {
-        return questIndex > rewardEarned;
+    public bool CheckCanEarnQuest(int pointIndex) {
+        return pointIndex > rewardEarned;
     }
 
     public float GetCurrentProgress(QuestType questType) {

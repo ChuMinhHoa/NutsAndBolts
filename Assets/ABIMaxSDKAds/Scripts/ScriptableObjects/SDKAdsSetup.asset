@@ -15,7 +15,7 @@ MonoBehaviour:
   IsActiveAppsflyer: 0
   maxAdsSetup:
     sdkKey:
-      AndroidID: _2WIIxqSpqZ6toZysDtbAT6SIUlIrCr5WBKPcTF8Inh_kvIMQmnUe5Pd4hPbgsflLofW8ikPA_dVCRQuP8k4oH
+      AndroidID: uJa4sGbT3zSQ9zw2o_CzJrxzsUI682WXsNFOfDGoT0Z5SsqQSWN52AZi7P0UtoN13VRe_MgEZodmMuzDKQwf0d
     interstitialAdUnitID:
       AndroidID: dd00e39c63ed1595
     rewardedAdUnitID:
