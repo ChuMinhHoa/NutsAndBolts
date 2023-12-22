@@ -104,7 +104,10 @@ public class PanelLevelRace : UIPanel
         }
         else
         {
-            AdsManager.Instance.ShowRewardVideo(WatchVideoRewardType.JoinRace.ToString(), JoinRaceSuccess);
+            if(ProfileManager.Instance.playerData.levelRaceSave.firstRace)
+                JoinRaceSuccess();
+            else
+                AdsManager.Instance.ShowRewardVideo(WatchVideoRewardType.JoinRace.ToString(), JoinRaceSuccess);
         }
     }
 
